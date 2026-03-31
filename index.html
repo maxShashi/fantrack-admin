@@ -306,7 +306,7 @@ const T = {
     'ap.sub':          'Integration tokens and access credentials',
     'ap.names':        ['Fan Counter API','Webhook Secret','Data Export Token'],
     'ap.descs':        ['Read-only access to fan count endpoint','Validates incoming payload signatures','Full read access for reporting exports'],
-    'ap.badge':        'Active',
+    'ap.badge':        'Inactive',
     'ap.created':      'Created',
     'ap.reveal':       '👁 Reveal',
     'ap.noperm':       '🔒 You do not have permission to view this.',
@@ -429,7 +429,7 @@ const T = {
     'ap.sub':          '集成令牌与访问凭证',
     'ap.names':        ['粉丝计数 API','Webhook 密钥','数据导出令牌'],
     'ap.descs':        ['只读权限，用于访问粉丝计数接口','验证传入请求的签名','完整读取权限，用于报表导出'],
-    'ap.badge':        '活跃',
+    'ap.badge':        '失效',
     'ap.created':      '创建于',
     'ap.reveal':       '👁 查看',
     'ap.noperm':       '🔒 你暂无查看权限',
@@ -552,9 +552,9 @@ let lpData=[
 let lpNextId=4;
 
 const _apiTokens=[
-  {name:0,desc:0,token:'ft_cnt_mX9kp2rQ7vNjL4wT8bYsF3hC6eD0aZ5x',created:'2025-12-01',calls:2841},
-  {name:1,desc:1,token:'whsec_Kp7nQx3Rm2Vt9Ys5Bw4Lf8Hd1Ec6Jg0Az',created:'2025-12-05',calls:547},
-  {name:2,desc:2,token:'exp_Tz6Wp1Xn8Qs4Mv7Yk3Rd2Lc9Fg5Bh0Je',  created:'2026-01-10',calls:93},
+  {name:0,desc:0,token:'ft_cnt_mX9kp2rQ7vNjL4wT8bYsF3hC6eD0aZ5x',created:'2026-01-03',calls:2841},
+  {name:1,desc:1,token:'whsec_Kp7nQx3Rm2Vt9Ys5Bw4Lf8Hd1Ec6Jg0Az',created:'2026-01-03',calls:547},
+  {name:2,desc:2,token:'exp_Tz6Wp1Xn8Qs4Mv7Yk3Rd2Lc9Fg5Bh0Je',  created:'2026-03-09',calls:93},
 ];
 
 // ═══════════════════════════════════════════════
@@ -912,7 +912,7 @@ function rAp(){
               <div style="font-size:12px;color:var(--muted)">${t('ap.descs')[tk.desc]}</div>
             </div>
             <div style="display:flex;align-items:center;gap:8px">
-              <span class="badge badge-green">${t('ap.badge')}</span>
+              <span class="badge badge-gray">${t('ap.badge')}</span>
               <span style="font-size:11px;color:var(--muted)">${t('ap.created')} ${tk.created}</span>
             </div>
           </div>
@@ -946,7 +946,7 @@ function rAp(){
           <div style="font-size:11px;color:var(--muted);margin-top:3px">${t('ap.h.latency')}</div>
         </div>
         <div style="text-align:center;padding:14px;background:var(--surface);border-radius:10px">
-          <div style="font-size:24px;font-weight:700;color:#f59e0b">3</div>
+          <div style="font-size:24px;font-weight:700;color:var(--muted)">0</div>
           <div style="font-size:11px;color:var(--muted);margin-top:3px">${t('ap.h.keys')}</div>
         </div>
       </div>
