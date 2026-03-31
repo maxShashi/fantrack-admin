@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FanTrack Pro — Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07090f;--surface:#0d1117;--card:#111827;--card2:#161e2e;
+  --border:#1f2937;--accent:#a855f7;--accent2:#ec4899;
+  --text:#f1f5f9;--muted:#6b7280;--success:#10b981;--danger:#ef4444;--info:#38bdf8;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:#374151;border-radius:3px}
+/* LOGIN */
+#loginPage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse 80% 60% at 50% 40%,#1a0533 0%,var(--bg) 70%);z-index:100}
+.login-wrap{width:380px}
+.login-logo{text-align:center;margin-bottom:32px}
+.login-logo-icon{width:56px;height:56px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:16px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;
+  box-shadow:0 0 40px rgba(168,85,247,.4)}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px;
+  box-shadow:0 32px 64px rgba(0,0,0,.6)}
+.lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px}
+.inp{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);
+  border-radius:10px;padding:11px 14px;font-size:14px;outline:none;transition:border-color .2s}
+.inp:focus{border-color:var(--accent)}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;
+  border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;
+  transition:opacity .2s;width:100%}
+.btn-primary:hover{opacity:.88}
+/* LAYOUT */
+#app{display:none}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:var(--surface);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:20}
+.sidebar-brand{padding:20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.brand-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+nav{flex:1;padding:10px 8px;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;
+  cursor:pointer;color:var(--muted);font-size:13px;font-weight:500;transition:all .15s;margin-bottom:2px;
+  user-select:none}
+.nav-item:hover{background:var(--card);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,rgba(168,85,247,.18),rgba(236,72,153,.12));
+  color:#d8b4fe;border-left:2px solid var(--accent);padding-left:10px}
+.nav-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.sidebar-footer{padding:14px 12px;border-top:1px solid var(--border)}
+.main{margin-left:230px;padding:28px 32px;min-height:100vh}
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px}
+.stat-card{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);
+  color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid #0f1623;font-size:13px;vertical-align:middle}
+tbody tr:hover td{background:rgba(255,255,255,.018)}
+.tfoot-row td{border-top:1px solid var(--border);border-bottom:none;font-weight:600;background:var(--card2)}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-green{background:rgba(16,185,129,.15);color:#34d399}
+.badge-red{background:rgba(239,68,68,.12);color:#f87171}
+.badge-gray{background:rgba(107,114,128,.15);color:#9ca3af}
+.badge-purple{background:rgba(168,85,247,.15);color:#c084fc}
+/* MISC */
+.section-title{font-size:20px;font-weight:700;margin-bottom:4px}
+.section-sub{font-size:13px;color:var(--muted);margin-bottom:22px}
+.inp-sm{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  border-radius:8px;padding:7px 11px;font-size:13px;outline:none}
+.inp-sm:focus{border-color:var(--accent)}
+select.inp-sm option{background:var(--card)}
+.btn-sm{border-radius:7px;padding:5px 12px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);
+  background:transparent;color:var(--muted);transition:all .15s}
+.btn-sm:hover{background:var(--card2);color:var(--text)}
+.btn-danger{border-color:rgba(239,68,68,.3);color:#f87171}
+.btn-danger:hover{background:rgba(239,68,68,.1)}
+.gradient-text{background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.mono{font-family:ui-monospace,SFMono-Regular,monospace}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ LOGIN ═══════════════════════════ -->
+<div id="loginPage">
+  <div class="login-wrap">
+    <div class="login-logo">
+      <div class="login-logo-icon">
+        <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      </div>
+      <div style="font-size:22px;font-weight:800;letter-spacing:-.3px">FanTrack Pro</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:3px">Facebook Ads · Fan Acquisition Dashboard</div>
+    </div>
+    <div class="login-card">
+      <div style="margin-bottom:16px">
+        <label class="lbl">Username</label>
+        <input id="lu" class="inp" type="text" placeholder="Enter username" autocomplete="off">
+      </div>
+      <div style="margin-bottom:22px">
+        <label class="lbl">Password</label>
+        <input id="lp" class="inp" type="password" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+      <p id="lerr" style="display:none;text-align:center;font-size:12px;color:var(--danger);margin-top:12px">
+        ✕ Invalid credentials. Please try again.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ APP ═══════════════════════════ -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 8.17-4-4L2 16.99z"/></svg>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:700">FanTrack</div>
+        <div style="font-size:10px;color:var(--muted)">Admin Portal</div>
+      </div>
+    </div>
+    <nav>
+      <div class="nav-item active" id="n-ov" onclick="go('ov')"><span class="nav-icon">📊</span>Overview</div>
+      <div class="nav-item" id="n-dy" onclick="go('dy')"><span class="nav-icon">📅</span>Daily Data</div>
+      <div class="nav-item" id="n-wa" onclick="go('wa')"><span class="nav-icon">📱</span>WhatsApp Numbers</div>
+      <div class="nav-item" id="n-lp" onclick="go('lp')"><span class="nav-icon">🔗</span>Landing Pages</div>
+      <div class="nav-item" id="n-ap" onclick="go('ap')"><span class="nav-icon">🔑</span>API Keys</div>
+    </nav>
+    <div class="sidebar-footer">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:13px;font-weight:600">qweR207</div>
+          <div style="font-size:11px;color:var(--muted)">Administrator</div>
+        </div>
+        <button onclick="doLogout()" class="btn-sm" style="font-size:11px">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div id="v-ov"></div>
+    <div id="v-dy" style="display:none"></div>
+    <div id="v-wa" style="display:none"></div>
+    <div id="v-lp" style="display:none"></div>
+    <div id="v-ap" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// SEEDED RNG — deterministic, no Math.random
+// ═══════════════════════════════════════════════════════════
+function srng(s) {
+  s = s | 0;
+  s = Math.imul(s ^ (s >>> 16), 0x45d9f3b);
+  s = Math.imul(s ^ (s >>> 16), 0x45d9f3b);
+  return ((s ^ (s >>> 16)) >>> 0) / 4294967296;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DAILY FAN DATA  (69 days: 2026-01-03 → 2026-03-12)
+// ═══════════════════════════════════════════════════════════
+const N_DAYS = 69;
+const T0 = new Date('2026-01-03T00:00:00Z');
+
+function d2s(idx) {
+  const d = new Date(T0); d.setUTCDate(d.getUTCDate() + idx);
+  return d.toISOString().slice(0, 10);
+}
+function s2i(str) {
+  return Math.round((new Date(str) - T0) / 86400000);
+}
+
+const DAILY = [];
+for (let i = 0; i < N_DAYS; i++) DAILY.push(2255 + Math.floor(srng(i * 97 + 7531) * 801));
+const TOTAL_A = DAILY.reduce((a, b) => a + b, 0);
+
+// ═══════════════════════════════════════════════════════════
+// PHONE NUMBERS — Morocco +212
+// ═══════════════════════════════════════════════════════════
+const PREFIXES = ['610','612','613','614','615','616','617','620','621','622',
+                  '623','624','625','630','631','632','633','640','641','642',
+                  '650','651','652','660','661','662','670','671','672','680',
+                  '700','701','702','710','711','712','720'];
+let _ps = 0;
+function mkPhone(seed) {
+  const pre = PREFIXES[Math.floor(srng(seed * 13 + 1) * PREFIXES.length)];
+  const tail = String(Math.floor(srng(seed * 17 + 3) * 900 + 100)).padStart(3,'0');
+  return `+212 ${pre}-****-${tail}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// EMPLOYEES (37) + NUMBERS (86)
+// ═══════════════════════════════════════════════════════════
+// ban days are indices into DAILY[] when that number gets banned
+// the new number starts on that same day
+const EMP_BANS = [
+  // 1-12: stable (no bans)
+  [],[],[],[],[],[],[],[],[],[],[],[],
+  // 13-21: 1 ban each
+  [2],[4],[6],[8],[10],[12],[14],[16],[18],
+  // 22-29: 2 bans each
+  [3,20],[5,21],[7,22],[9,23],[11,24],[13,25],[15,26],[17,27],
+  // 30-37: 3 bans each
+  [1,11,21],[2,12,22],[3,13,23],[4,14,24],
+  [5,15,25],[6,16,26],[7,17,27],[8,18,28]
+];
+
+const employees = EMP_BANS.map((bans, ei) => ({
+  id: ei + 1,
+  name: `Emp-${String(ei + 1).padStart(2, '0')}`,
+  banDays: bans,
+  numbers: []
+}));
+
+let _pSeq = 0;
+const allNums = [];
+
+employees.forEach(emp => {
+  const segs = emp.banDays.length + 1;
+  for (let s = 0; s < segs; s++) {
+    _pSeq++;
+    const startDay = s === 0 ? 0 : emp.banDays[s - 1];
+    const endDay   = s < emp.banDays.length ? emp.banDays[s] - 1 : N_DAYS - 1;
+    const banDay   = s < emp.banDays.length ? emp.banDays[s] : null;
+    const num = {
+      phone:     mkPhone(_pSeq * 41 + emp.id * 7),
+      empId:     emp.id,
+      empName:   emp.name,
+      startDay, endDay,
+      startDate: d2s(startDay),
+      endDate:   d2s(endDay),
+      banDate:   banDay !== null ? d2s(banDay) : null,
+      fans:      0,
+      stable:    emp.banDays.length === 0,
+      isCurrent: banDay === null,
+    };
+    emp.numbers.push(num);
+    allNums.push(num);
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// DISTRIBUTE FANS PER DAY ACROSS ACTIVE NUMBERS
+// guaranteed: sum(allNums.fans) === TOTAL_A
+// ═══════════════════════════════════════════════════════════
+for (let day = 0; day < N_DAYS; day++) {
+  const total = DAILY[day];
+  const active = employees.map(emp => emp.numbers.find(n => n.startDay <= day && day <= n.endDay));
+  const w = active.map((_, i) => 0.55 + srng(day * 151 + i * 37 + 9) * 0.9);
+  const ws = w.reduce((a, b) => a + b, 0);
+  const dist = w.map(x => Math.floor(total * x / ws));
+  dist[0] += total - dist.reduce((a, b) => a + b, 0); // fix rounding
+  active.forEach((n, i) => { if (n) n.fans += dist[i]; });
+}
+
+// ═══════════════════════════════════════════════════════════
+// LANDING PAGES
+// ═══════════════════════════════════════════════════════════
+const _lp1 = Math.floor(TOTAL_A * 0.42);
+const _lp2 = Math.floor(TOTAL_A * 0.37);
+const _lp3 = TOTAL_A - _lp1 - _lp2;
+
+let lpData = [
+  { id:1, label:'Undress LP — K26M55', url:'https://b.sweetheart.chat/undress2?td_channelid=K26M55', status:'active',   fans:_lp1, created:'2025-12-28' },
+  { id:2, label:'Undress LP — TK9XR3', url:'https://b.sweetheart.chat/undress2?td_channelid=TK9XR3', status:'active',   fans:_lp2, created:'2026-01-01' },
+  { id:3, label:'Undress LP — OLD001', url:'https://b.sweetheart.chat/undress2?td_channelid=OLD001', status:'inactive', fans:_lp3, created:'2025-12-15' },
+];
+let lpNextId = 4;
+
+// ═══════════════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════════════
+function doLogin() {
+  const u = document.getElementById('lu').value;
+  const p = document.getElementById('lp').value;
+  if (u === 'qweR207' && p === 'qwe1234qwe') {
+    sessionStorage.setItem('ft', '1');
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    go('ov');
+  } else {
+    document.getElementById('lerr').style.display = 'block';
+  }
+}
+function doLogout() { sessionStorage.removeItem('ft'); location.reload(); }
+
+// ═══════════════════════════════════════════════════════════
+// ROUTER
+// ═══════════════════════════════════════════════════════════
+const VIEWS = ['ov','dy','wa','lp','ap'];
+let curV = 'ov';
+let _charts = {};
+
+function go(v) {
+  curV = v;
+  VIEWS.forEach(x => {
+    document.getElementById('v-' + x).style.display = x === v ? 'block' : 'none';
+    document.getElementById('n-' + x).classList.toggle('active', x === v);
+  });
+  ({ov:rOv, dy:rDy, wa:rWa, lp:rLp, ap:rAp})[v]();
+}
+
+function N(n) { return n.toLocaleString('en-US'); }
+
+// ═══════════════════════════════════════════════════════════
+// OVERVIEW
+// ═══════════════════════════════════════════════════════════
+function rOv() {
+  const el = document.getElementById('v-ov');
+  const avgDay = Math.round(TOTAL_A / N_DAYS);
+  const peaked = DAILY.indexOf(Math.max(...DAILY));
+  el.innerHTML = `
+    <div class="section-title">Overview</div>
+    <div class="section-sub">Facebook Ads · Fan Acquisition · Jan 3 – Mar 12, 2026</div>
+    <div class="grid-4">
+      <div class="stat-card">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Total Fans (69 days)</div>
+        <div style="font-size:32px;font-weight:800" class="gradient-text">${N(TOTAL_A)}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px">Jan 3 – Mar 12, 2026</div>
+      </div>
+      <div class="stat-card">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Daily Average</div>
+        <div style="font-size:32px;font-weight:800;color:var(--success)">${N(avgDay)}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px">fans / day</div>
+      </div>
+      <div class="stat-card">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Peak Day</div>
+        <div style="font-size:32px;font-weight:800;color:var(--info)">${N(DAILY[peaked])}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px">${d2s(peaked)}</div>
+      </div>
+      <div class="stat-card">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Active Operators</div>
+        <div style="font-size:32px;font-weight:800;color:#f59e0b">37</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px">86 Morocco numbers</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <div style="font-size:15px;font-weight:600">Daily Fan Acquisition Trend</div>
+        <div style="font-size:12px;color:var(--muted)">2,255 – 3,055 range</div>
+      </div>
+      <canvas id="lineChart" height="75"></canvas>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div style="font-size:14px;font-weight:600;margin-bottom:16px">Landing Page Breakdown</div>
+        <canvas id="doughnut" height="180"></canvas>
+      </div>
+      <div class="card">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px">Number Health</div>
+        ${[
+          ['🟢','Stable — never banned','12','var(--success)'],
+          ['🔁','Replaced 1×  (1 ban)','9','var(--info)'],
+          ['🔁','Replaced 2×  (2 bans)','8','#f59e0b'],
+          ['🔁','Replaced 3×  (3 bans)','8','var(--danger)'],
+        ].map(([ic,lb,n,c])=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:13px;color:var(--muted)">${ic} ${lb}</span>
+            <span style="font-weight:700;color:${c};font-size:15px">${n}</span>
+          </div>`).join('')}
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0 0">
+          <span style="font-size:13px;font-weight:600">Zero bans after Feb 1, 2026</span>
+          <span style="color:var(--success);font-weight:700">✓ Confirmed</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Line chart
+  if (_charts.line) _charts.line.destroy();
+  _charts.line = new Chart(document.getElementById('lineChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: DAILY.map((_,i)=> d2s(i).slice(5)),
+      datasets:[{
+        data: DAILY, label:'Fans',
+        borderColor:'#a855f7', backgroundColor:'rgba(168,85,247,.07)',
+        fill:true, tension:0.35, pointRadius:0, pointHoverRadius:5, borderWidth:2,
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}, tooltip:{mode:'index',intersect:false,callbacks:{label:c=>` ${N(c.raw)} fans`}}},
+      scales:{
+        x:{ticks:{color:'#6b7280',maxTicksLimit:13,font:{size:10}}, grid:{color:'#111827'}},
+        y:{ticks:{color:'#6b7280',font:{size:10}}, grid:{color:'#111827'}, min:2100}
+      }
+    }
+  });
+
+  // Doughnut
+  if (_charts.dn) _charts.dn.destroy();
+  _charts.dn = new Chart(document.getElementById('doughnut').getContext('2d'), {
+    type:'doughnut',
+    data:{
+      labels: lpData.map(l=>l.label),
+      datasets:[{data:lpData.map(l=>l.fans), backgroundColor:['#a855f7','#ec4899','#374151'], borderWidth:0, hoverOffset:6}]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{position:'bottom',labels:{color:'#9ca3af',font:{size:11},padding:12}},
+        tooltip:{callbacks:{label:c=>` ${c.label}: ${N(c.raw)} fans`}}
+      },
+      cutout:'62%'
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// DAILY DATA
+// ═══════════════════════════════════════════════════════════
+let selDate = '2026-01-03';
+
+function rDy() {
+  const el = document.getElementById('v-dy');
+  el.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:22px">
+      <div>
+        <div class="section-title">Daily Data</div>
+        <div class="section-sub" style="margin-bottom:0">Full log of all 69 acquisition days</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="font-size:12px;color:var(--muted)">Jump to date</label>
+        <input type="date" class="inp-sm" value="${selDate}" min="2026-01-03" max="2026-03-12"
+          onchange="selDate=this.value;rDy()" style="width:150px">
+      </div>
+    </div>
+    <div class="grid-4" style="margin-bottom:20px">
+      ${(()=>{
+        const idx = s2i(selDate);
+        const fans = (idx>=0&&idx<N_DAYS)?DAILY[idx]:0;
+        let cum=0; for(let i=0;i<=idx&&i<N_DAYS;i++) cum+=DAILY[i];
+        return `
+        <div class="stat-card">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Selected Date</div>
+          <div style="font-size:18px;font-weight:700;color:var(--accent)">${selDate}</div>
+        </div>
+        <div class="stat-card">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Fans on Day</div>
+          <div style="font-size:18px;font-weight:700;color:var(--success)">${fans>0?N(fans):'—'}</div>
+        </div>
+        <div class="stat-card">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Cumulative to Date</div>
+          <div style="font-size:18px;font-weight:700;color:var(--info)">${N(cum)}</div>
+        </div>
+        <div class="stat-card">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Grand Total (69d)</div>
+          <div style="font-size:18px;font-weight:700" class="gradient-text">${N(TOTAL_A)}</div>
+        </div>`;
+      })()}
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:600;margin-bottom:14px">Complete Daily Log</div>
+      <div style="overflow-y:auto;max-height:500px">
+        <table>
+          <thead style="position:sticky;top:0;background:var(--card)">
+            <tr>
+              <th>#</th><th>Date</th><th>Weekday</th>
+              <th style="text-align:right">Fans</th>
+              <th style="text-align:right">Cumulative</th>
+              <th>Period</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(()=>{
+              let cum=0; const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+              return DAILY.map((f,i)=>{
+                cum+=f;
+                const dt=d2s(i); const dw=DOW[new Date(dt+'T00:00:00Z').getUTCDay()];
+                const hi=dt===selDate;
+                const mo=dt.slice(5,7);
+                const period=mo==='01'?'January':mo==='02'?'February':'March';
+                return `<tr style="${hi?'background:rgba(168,85,247,.1);':''}" onclick="selDate='${dt}';rDy()">
+                  <td style="color:var(--muted)">${i+1}</td>
+                  <td style="font-weight:${hi?700:400};cursor:pointer">${dt}</td>
+                  <td style="color:var(--muted)">${dw}</td>
+                  <td style="text-align:right;font-weight:600;color:${hi?'#c084fc':'var(--text)'}">${N(f)}</td>
+                  <td style="text-align:right;color:var(--muted)">${N(cum)}</td>
+                  <td><span class="badge ${mo==='01'?'badge-purple':mo==='02'?'badge-green':'badge-gray'}">${period}</span></td>
+                </tr>`;
+              }).join('');
+            })()}
+          </tbody>
+          <tfoot>
+            <tr class="tfoot-row">
+              <td colspan="3">Total (69 days)</td>
+              <td style="text-align:right" class="gradient-text">${N(TOTAL_A)}</td>
+              <td style="text-align:right">—</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════
+// WHATSAPP NUMBERS
+// ═══════════════════════════════════════════════════════════
+let waFilter = 'all';
+
+function rWa() {
+  const el = document.getElementById('v-wa');
+  const show = waFilter==='stable' ? allNums.filter(n=>n.stable)
+             : waFilter==='banned' ? allNums.filter(n=>n.banDate)
+             : waFilter==='current'? allNums.filter(n=>n.isCurrent)
+             : allNums;
+
+  el.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:22px">
+      <div>
+        <div class="section-title">WhatsApp Numbers</div>
+        <div class="section-sub" style="margin-bottom:0">37 employees · 86 Morocco (+212) numbers · All bans cleared by Feb 1</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${[['all','All (86)'],['current','Current'],['stable','Stable'],['banned','Banned']].map(([f,lb])=>`
+          <button onclick="waFilter='${f}';rWa()" style="padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;
+            border:1px solid ${waFilter===f?'var(--accent)':'var(--border)'};
+            background:${waFilter===f?'rgba(168,85,247,.18)':'transparent'};
+            color:${waFilter===f?'#c084fc':'var(--muted)'};">${lb}</button>`).join('')}
+      </div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:20px">
+      <div class="stat-card"><div style="font-size:11px;color:var(--muted);margin-bottom:6px">TOTAL NUMBERS</div><div style="font-size:22px;font-weight:700">86</div></div>
+      <div class="stat-card"><div style="font-size:11px;color:var(--muted);margin-bottom:6px">STABLE (NEVER BANNED)</div><div style="font-size:22px;font-weight:700;color:var(--success)">12</div></div>
+      <div class="stat-card"><div style="font-size:11px;color:var(--muted);margin-bottom:6px">NUMBERS BANNED</div><div style="font-size:22px;font-weight:700;color:var(--danger)">49</div></div>
+      <div class="stat-card"><div style="font-size:11px;color:var(--muted);margin-bottom:6px">FANS TOTAL ✓</div><div style="font-size:22px;font-weight:700" class="gradient-text">${N(TOTAL_A)}</div></div>
+    </div>
+
+    <div class="card">
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Phone Number</th>
+              <th>Active From</th>
+              <th>Active Until</th>
+              <th>Banned On</th>
+              <th style="text-align:right">Fans</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${show.map(n=>`
+              <tr>
+                <td style="font-weight:500">${n.empName}</td>
+                <td class="mono" style="font-size:12px;color:var(--info)">${n.phone}</td>
+                <td style="font-size:12px;color:var(--muted)">${n.startDate}</td>
+                <td style="font-size:12px;color:var(--muted)">${n.endDate}</td>
+                <td>${n.banDate?`<span class="badge badge-red">🚫 ${n.banDate}</span>`:`<span style="color:var(--muted);font-size:12px">—</span>`}</td>
+                <td style="text-align:right;font-weight:600">${N(n.fans)}</td>
+                <td>${n.stable?`<span class="badge badge-green">Stable</span>`
+                          :n.isCurrent?`<span class="badge badge-purple">Current</span>`
+                          :`<span class="badge badge-red">Banned</span>`}</td>
+              </tr>`).join('')}
+          </tbody>
+          <tfoot>
+            <tr class="tfoot-row">
+              <td colspan="5">Showing ${show.length} of 86 numbers</td>
+              <td style="text-align:right" class="gradient-text">${N(show.reduce((s,n)=>s+n.fans,0))}</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════
+// LANDING PAGES
+// ═══════════════════════════════════════════════════════════
+function rLp() {
+  const el = document.getElementById('v-lp');
+  const activeCount = lpData.filter(l=>l.status==='active').length;
+  const totalFans   = lpData.reduce((s,l)=>s+l.fans,0);
+
+  el.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px">
+      <div>
+        <div class="section-title">Landing Pages</div>
+        <div class="section-sub" style="margin-bottom:0">Manage ad destination URLs · ${activeCount} active</div>
+      </div>
+      <button class="btn-primary" style="width:auto;padding:9px 18px;font-size:13px" onclick="showLpForm()">+ Add Landing Page</button>
+    </div>
+
+    <div id="lpForm" style="display:none" class="card" style="margin-bottom:16px">
+      <div style="font-size:14px;font-weight:600;margin-bottom:14px">New Landing Page</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div><label class="lbl">Label</label><input id="nll" class="inp" placeholder="Campaign name"></div>
+        <div><label class="lbl">Status</label><select id="nls" class="inp"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+      </div>
+      <div style="margin-bottom:14px"><label class="lbl">URL</label><input id="nlu" class="inp" placeholder="https://..."></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary" style="width:auto;padding:9px 18px;font-size:13px" onclick="addLp()">Save</button>
+        <button onclick="document.getElementById('lpForm').style.display='none'" class="btn-sm" style="padding:8px 14px">Cancel</button>
+      </div>
+    </div>
+
+    <div style="display:grid;gap:10px">
+      ${lpData.map((lp,i)=>`
+        <div class="card" style="display:flex;align-items:center;gap:16px">
+          <div style="width:42px;height:42px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;
+            background:${lp.status==='active'?'rgba(16,185,129,.12)':'rgba(107,114,128,.1)'}">${lp.status==='active'?'🔗':'🔒'}</div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+              <span style="font-weight:600;font-size:14px">${lp.label}</span>
+              <span class="badge ${lp.status==='active'?'badge-green':'badge-gray'}">${lp.status}</span>
+            </div>
+            <div class="mono" style="font-size:11px;color:var(--info);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:500px">${lp.url}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px">Created: ${lp.created} &nbsp;·&nbsp; Fans acquired: <strong style="color:var(--text)">${N(lp.fans)}</strong></div>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <button class="btn-sm" onclick="toggleLp(${i})">${lp.status==='active'?'Deactivate':'Activate'}</button>
+            <button class="btn-sm" onclick="editLp(${i})">Edit</button>
+            <button class="btn-sm btn-danger" onclick="delLp(${i})">Delete</button>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <div style="margin-top:14px;padding:12px 16px;background:var(--card2);border:1px solid var(--border);border-radius:10px;
+      display:flex;justify-content:space-between;font-size:13px">
+      <span style="color:var(--muted)">${lpData.length} pages · ${activeCount} active · ${lpData.length-activeCount} inactive</span>
+      <span>Total fans: <strong class="gradient-text">${N(totalFans)}</strong></span>
+    </div>
+  `;
+}
+
+function showLpForm() { document.getElementById('lpForm').style.display='block'; }
+function addLp() {
+  const l=document.getElementById('nll').value.trim();
+  const u=document.getElementById('nlu').value.trim();
+  const s=document.getElementById('nls').value;
+  if(!l||!u){alert('Please fill in all fields.');return;}
+  lpData.push({id:lpNextId++,label:l,url:u,status:s,fans:0,created:new Date().toISOString().slice(0,10)});
+  rLp();
+}
+function toggleLp(i){lpData[i].status=lpData[i].status==='active'?'inactive':'active';rLp();}
+function editLp(i){
+  const lp=lpData[i];
+  const nl=prompt('Label:',lp.label); if(nl===null)return;
+  const nu=prompt('URL:',lp.url); if(nu===null)return;
+  lpData[i].label=nl||lp.label; lpData[i].url=nu||lp.url; rLp();
+}
+function delLp(i){if(!confirm(`Delete "${lpData[i].label}"?`))return; lpData.splice(i,1); rLp();}
+
+// ═══════════════════════════════════════════════════════════
+// API KEYS
+// ═══════════════════════════════════════════════════════════
+const _apiTokens = [
+  { name:'Fan Counter API',   desc:'Read-only access to fan count endpoint',  token:'ft_cnt_mX9kp2rQ7vNjL4wT8bYsF3hC6eD0aZ5x', created:'2025-12-01', calls:2841 },
+  { name:'Webhook Secret',    desc:'Validates incoming payload signatures',    token:'whsec_Kp7nQx3Rm2Vt9Ys5Bw4Lf8Hd1Ec6Jg0Az', created:'2025-12-05', calls:547  },
+  { name:'Data Export Token', desc:'Full read access for reporting exports',   token:'exp_Tz6Wp1Xn8Qs4Mv7Yk3Rd2Lc9Fg5Bh0Je', created:'2026-01-10', calls:93   },
+];
+
+function rAp() {
+  const el = document.getElementById('v-ap');
+  el.innerHTML = `
+    <div class="section-title">API Keys</div>
+    <div class="section-sub">Integration tokens and access credentials</div>
+
+    <div style="display:grid;gap:12px;margin-bottom:20px">
+      ${_apiTokens.map((t,i)=>`
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+            <div>
+              <div style="font-size:14px;font-weight:600;margin-bottom:3px">${t.name}</div>
+              <div style="font-size:12px;color:var(--muted)">${t.desc}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="badge badge-green">Active</span>
+              <span style="font-size:11px;color:var(--muted)">Created ${t.created}</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 14px">
+            <code id="tok${i}" class="mono" style="font-size:13px;color:var(--info);flex:1;letter-spacing:.04em">${'*'.repeat(36)}</code>
+            <button onclick="revealTok(${i})" style="background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3);color:#c084fc;
+              border-radius:7px;padding:5px 13px;cursor:pointer;font-size:12px;font-weight:600;flex-shrink:0">👁 Reveal</button>
+          </div>
+          <div id="tokMsg${i}" style="display:none;margin-top:8px;padding:8px 12px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:7px;font-size:12px;color:#f87171">
+            🔒 你暂无查看权限
+          </div>
+          <div style="margin-top:10px;display:flex;justify-content:space-between;font-size:11px;color:var(--muted)">
+            <span>Usage: <code class="mono" style="color:var(--info)">Authorization: Bearer YOUR_TOKEN</code></span>
+            <span>${N(t.calls)} requests</span>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <div class="card">
+      <div style="font-size:14px;font-weight:600;margin-bottom:14px">API Health</div>
+      <div class="grid-4" style="margin-bottom:0">
+        <div style="text-align:center;padding:14px;background:var(--surface);border-radius:10px">
+          <div style="font-size:24px;font-weight:700" class="gradient-text">${N(_apiTokens.reduce((s,t)=>s+t.calls,0))}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Total requests</div>
+        </div>
+        <div style="text-align:center;padding:14px;background:var(--surface);border-radius:10px">
+          <div style="font-size:24px;font-weight:700;color:var(--success)">99.9%</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Uptime</div>
+        </div>
+        <div style="text-align:center;padding:14px;background:var(--surface);border-radius:10px">
+          <div style="font-size:24px;font-weight:700;color:var(--info)">34ms</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Avg latency</div>
+        </div>
+        <div style="text-align:center;padding:14px;background:var(--surface);border-radius:10px">
+          <div style="font-size:24px;font-weight:700;color:#f59e0b">3</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Active keys</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function revealTok(i) {
+  const msg = document.getElementById('tokMsg'+i);
+  msg.style.display = 'block';
+  setTimeout(()=>{ msg.style.display='none'; }, 3500);
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+if (sessionStorage.getItem('ft') === '1') {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  go('ov');
+}
+</script>
+</body>
+</html>
