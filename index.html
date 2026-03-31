@@ -11,14 +11,17 @@
   --bg:#07090f;--surface:#0d1117;--card:#111827;--card2:#161e2e;
   --border:#1f2937;--accent:#a855f7;--accent2:#ec4899;
   --text:#f1f5f9;--muted:#6b7280;--success:#10b981;--danger:#ef4444;--info:#38bdf8;
+  --sb-w:230px;
 }
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;min-height:100vh}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--surface)}
 ::-webkit-scrollbar-thumb{background:#374151;border-radius:3px}
+
+/* ── LOGIN ── */
 #loginPage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
   background:radial-gradient(ellipse 80% 60% at 50% 40%,#1a0533 0%,var(--bg) 70%);z-index:100}
-.login-wrap{width:380px}
+.login-wrap{width:100%;max-width:380px;padding:0 20px}
 .login-logo{text-align:center;margin-bottom:32px}
 .login-logo-icon{width:56px;height:56px;background:linear-gradient(135deg,var(--accent),var(--accent2));
   border-radius:16px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;
@@ -33,12 +36,36 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;
   transition:opacity .2s;width:100%}
 .btn-primary:hover{opacity:.88}
+
+/* ── TOPBAR (mobile) ── */
 #app{display:none}
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:var(--surface);
-  border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:20}
-.sidebar-brand{padding:20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.topbar{display:none;position:fixed;top:0;left:0;right:0;height:52px;background:var(--surface);
+  border-bottom:1px solid var(--border);z-index:30;align-items:center;padding:0 14px;gap:12px}
+.topbar-brand{font-size:15px;font-weight:700;flex:1}
+.topbar-sub{font-size:10px;color:var(--muted)}
+.hamburger{background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;
+  width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:17px;flex-shrink:0;transition:background .15s}
+.hamburger:hover{background:var(--card)}
+
+/* ── OVERLAY ── */
+#sbOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:18;backdrop-filter:blur(2px)}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sb-w);background:var(--surface);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:20;
+  transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.sidebar.collapsed{transform:translateX(calc(-1 * var(--sb-w)))}
+.sidebar-brand{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .brand-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));
   border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+
+/* collapse toggle on desktop */
+.sb-toggle{display:flex;align-items:center;justify-content:center;width:24px;height:24px;
+  border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);
+  cursor:pointer;font-size:11px;margin-left:auto;flex-shrink:0;transition:all .15s}
+.sb-toggle:hover{background:var(--card2);color:var(--text)}
+
 nav{flex:1;padding:10px 8px;overflow-y:auto}
 .nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;
   cursor:pointer;color:var(--muted);font-size:13px;font-weight:500;transition:all .15s;margin-bottom:2px;user-select:none}
@@ -47,22 +74,33 @@ nav{flex:1;padding:10px 8px;overflow-y:auto}
   color:#d8b4fe;border-left:2px solid var(--accent);padding-left:10px}
 .nav-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 .sidebar-footer{padding:14px 12px;border-top:1px solid var(--border)}
-.main{margin-left:230px;padding:28px 32px;min-height:100vh}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sb-w);padding:28px 32px;min-height:100vh;transition:margin-left .25s cubic-bezier(.4,0,.2,1)}
+.main.full{margin-left:0}
+
+/* ── CARDS ── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px}
 .stat-card{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+
+/* ── TABLE ── */
 table{width:100%;border-collapse:collapse}
 th{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);
   color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
 td{padding:9px 12px;border-bottom:1px solid #0f1623;font-size:13px;vertical-align:middle}
 tbody tr:hover td{background:rgba(255,255,255,.018)}
 .tfoot-row td{border-top:1px solid var(--border);border-bottom:none;font-weight:600;background:var(--card2)}
+
+/* ── BADGES ── */
 .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
 .badge-green{background:rgba(16,185,129,.15);color:#34d399}
 .badge-red{background:rgba(239,68,68,.12);color:#f87171}
 .badge-gray{background:rgba(107,114,128,.15);color:#9ca3af}
 .badge-purple{background:rgba(168,85,247,.15);color:#c084fc}
+
+/* ── MISC ── */
 .section-title{font-size:20px;font-weight:700;margin-bottom:4px}
 .section-sub{font-size:13px;color:var(--muted);margin-bottom:22px}
 .inp-sm{background:var(--surface);border:1px solid var(--border);color:var(--text);
@@ -80,6 +118,48 @@ select.inp-sm option{background:var(--card)}
 .lang-btn{background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.3);color:#c084fc;
   border-radius:7px;padding:4px 10px;cursor:pointer;font-size:12px;font-weight:700;transition:all .15s}
 .lang-btn:hover{background:rgba(168,85,247,.25)}
+
+/* ════════════════════════════════
+   MOBILE  ≤ 768px
+════════════════════════════════ */
+@media(max-width:768px){
+  .topbar{display:flex}
+  .sidebar{top:52px;transform:translateX(calc(-1 * var(--sb-w)))}
+  .sidebar.open{transform:translateX(0)}
+  #sbOverlay.show{display:block}
+  .main{margin-left:0;padding:16px 14px;padding-top:68px}
+  .main.full{margin-left:0}
+
+  /* 4-col → 2-col on phone */
+  .grid-4{grid-template-columns:1fr 1fr;gap:10px}
+  .grid-2{grid-template-columns:1fr;gap:10px}
+
+  /* stat card smaller text */
+  .stat-card .big-num{font-size:22px !important}
+
+  /* card padding tighter */
+  .card{padding:14px}
+
+  /* overview header stack */
+  .ov-header{flex-direction:column !important;align-items:flex-start !important;gap:8px !important}
+  .ov-date-pill{font-size:11px !important;padding:5px 9px !important}
+
+  /* lp card stack */
+  .lp-card-inner{flex-direction:column !important;align-items:flex-start !important;gap:10px}
+  .lp-card-actions{flex-wrap:wrap}
+
+  /* table horizontal scroll */
+  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{min-width:520px}
+
+  /* daily stats mini */
+  .dy-jump-row{flex-direction:column !important;align-items:flex-start !important}
+
+  /* section title */
+  .section-title{font-size:17px}
+
+  .login-card{padding:24px 20px}
+}
 </style>
 </head>
 <body>
@@ -114,15 +194,30 @@ select.inp-sm option{background:var(--card)}
 
 <!-- APP -->
 <div id="app">
-  <div class="sidebar">
+
+  <!-- MOBILE TOPBAR -->
+  <div class="topbar">
+    <div class="brand-icon" style="width:30px;height:30px;border-radius:7px;flex-shrink:0">
+      <svg width="16" height="16" fill="white" viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 8.17-4-4L2 16.99z"/></svg>
+    </div>
+    <div class="topbar-brand">FanTrack <span class="topbar-sub">Pro</span></div>
+    <button class="lang-btn" style="font-size:11px;padding:3px 8px" onclick="toggleLang()" id="topLangBtn"></button>
+    <button class="hamburger" onclick="toggleSidebar()" id="hamburgerBtn">☰</button>
+  </div>
+
+  <!-- SIDEBAR OVERLAY -->
+  <div id="sbOverlay" onclick="closeSidebar()"></div>
+
+  <div class="sidebar" id="sidebar">
     <div class="sidebar-brand">
       <div class="brand-icon">
         <svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 8.17-4-4L2 16.99z"/></svg>
       </div>
-      <div>
+      <div style="flex:1">
         <div style="font-size:14px;font-weight:700">FanTrack</div>
         <div id="sb-portal" style="font-size:10px;color:var(--muted)"></div>
       </div>
+      <button class="sb-toggle" onclick="toggleDesktopSidebar()" id="desktopToggle" title="收起菜单">◀</button>
     </div>
     <!-- PROJECT SELECTOR -->
     <div style="padding:10px 12px 8px;border-bottom:1px solid var(--border)">
@@ -171,7 +266,7 @@ select.inp-sm option{background:var(--card)}
       <button class="lang-btn" style="width:100%" onclick="toggleLang()" id="appLangBtn"></button>
     </div>
   </div>
-  <div class="main">
+  <div class="main" id="mainArea">
     <div id="v-ov"></div>
     <div id="v-dy" style="display:none"></div>
     <div id="v-wa" style="display:none"></div>
@@ -469,6 +564,7 @@ function applyStaticLang() {
   const lerr = document.getElementById('lerr');
   if (lerr && lerr.style.display !== 'none') lerr.textContent = t('login.err');
   document.getElementById('loginLangBtn').textContent = t('lang.toggle');
+  const tlb = document.getElementById('topLangBtn'); if(tlb) tlb.textContent = t('lang.toggle');
   // Sidebar
   s('sb-portal',      t('sb.portal'));
   s('sb-proj-label',  t('sb.proj.label'));
@@ -576,14 +672,6 @@ function doLogout(){sessionStorage.removeItem('ft');location.reload();}
 
 const VIEWS=['ov','dy','wa','lp','ap'];
 let curV='ov', _charts={};
-function go(v){
-  curV=v;
-  VIEWS.forEach(x=>{
-    document.getElementById('v-'+x).style.display=x===v?'block':'none';
-    document.getElementById('n-'+x).classList.toggle('active',x===v);
-  });
-  ({ov:rOv,dy:rDy,wa:rWa,lp:rLp,ap:rAp})[v]();
-}
 function N(n){return n.toLocaleString('en-US');}
 
 // ═══════════════════════════════════════════════
@@ -593,12 +681,12 @@ function rOv(){
   const el=document.getElementById('v-ov');
   const avgDay=Math.round(TOTAL_A/N_DAYS), peaked=DAILY.indexOf(Math.max(...DAILY));
   el.innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px">
+    <div class="ov-header" style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px">
       <div>
         <div class="section-title">${t('ov.title')}</div>
         <div style="font-size:13px;color:var(--muted)">${t('ov.sub')}</div>
       </div>
-      <div onclick="alert(t('ov.date.noperm'))" style="cursor:pointer;background:var(--card2);border:1px solid var(--border);
+      <div class="ov-date-pill" onclick="alert(t('ov.date.noperm'))" style="cursor:pointer;background:var(--card2);border:1px solid var(--border);
         border-radius:8px;padding:6px 12px;font-size:12px;color:var(--muted);white-space:nowrap;user-select:none;
         display:flex;align-items:center;gap:6px">
         <span>📅</span>
@@ -688,7 +776,7 @@ function rDy(){
   let cum=0; for(let i=0;i<=idx&&i<N_DAYS;i++) cum+=DAILY[i];
   const DOW=t('dy.dow'), MO=t('dy.months');
   el.innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:22px">
+    <div class="dy-jump-row" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:22px">
       <div>
         <div class="section-title">${t('dy.title')}</div>
         <div class="section-sub" style="margin-bottom:0">${t('dy.sub')}</div>
@@ -719,7 +807,7 @@ function rDy(){
     </div>
     <div class="card">
       <div style="font-size:14px;font-weight:600;margin-bottom:14px">${t('dy.log')}</div>
-      <div style="overflow-y:auto;max-height:500px">
+      <div class="table-scroll" style="overflow-y:auto;max-height:500px">
         <table>
           <thead style="position:sticky;top:0;background:var(--card)">
             <tr>
@@ -786,7 +874,7 @@ function rWa(){
       <div class="stat-card"><div style="font-size:11px;color:var(--muted);margin-bottom:6px">${t('wa.s.fans')}</div><div style="font-size:22px;font-weight:700" class="gradient-text">${N(TOTAL_A)}</div></div>
     </div>
     <div class="card">
-      <div style="overflow-x:auto">
+      <div class="table-scroll">
         <table>
           <thead>
             <tr>
@@ -856,7 +944,7 @@ function rLp(){
     </div>
     <div style="display:grid;gap:10px">
       ${lpData.map((lp,i)=>`
-        <div class="card" style="display:flex;align-items:center;gap:16px">
+        <div class="card lp-card-inner" style="display:flex;align-items:center;gap:16px">
           <div style="width:42px;height:42px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;
             background:${lp.status==='active'?'rgba(16,185,129,.12)':'rgba(107,114,128,.1)'}">${lp.status==='active'?'🔗':'🔒'}</div>
           <div style="flex:1;min-width:0">
@@ -956,6 +1044,47 @@ function revealTok(i){
   const m=document.getElementById('tokMsg'+i);
   m.textContent=t('ap.noperm'); m.style.display='block';
   setTimeout(()=>{m.style.display='none';},3500);
+}
+
+// ═══════════════════════════════════════════════
+// SIDEBAR TOGGLE
+// ═══════════════════════════════════════════════
+const isMobile = () => window.innerWidth <= 768;
+
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sbOverlay');
+  const isOpen = sb.classList.contains('open');
+  if (isOpen) { sb.classList.remove('open'); ov.classList.remove('show'); }
+  else         { sb.classList.add('open');    ov.classList.add('show'); }
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sbOverlay').classList.remove('show');
+}
+
+let desktopCollapsed = false;
+function toggleDesktopSidebar() {
+  desktopCollapsed = !desktopCollapsed;
+  const sb   = document.getElementById('sidebar');
+  const main = document.getElementById('mainArea');
+  const btn  = document.getElementById('desktopToggle');
+  if (desktopCollapsed) {
+    sb.classList.add('collapsed'); main.classList.add('full'); btn.textContent = '▶';
+  } else {
+    sb.classList.remove('collapsed'); main.classList.remove('full'); btn.textContent = '◀';
+  }
+}
+
+// close sidebar on nav click (mobile)
+function go(v) {
+  curV = v;
+  VIEWS.forEach(x => {
+    document.getElementById('v-' + x).style.display = x === v ? 'block' : 'none';
+    document.getElementById('n-' + x).classList.toggle('active', x === v);
+  });
+  if (isMobile()) closeSidebar();
+  ({ov:rOv, dy:rDy, wa:rWa, lp:rLp, ap:rAp})[v]();
 }
 
 // ═══════════════════════════════════════════════
