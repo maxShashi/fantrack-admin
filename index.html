@@ -124,6 +124,35 @@ select.inp-sm option{background:var(--card)}
         <div id="sb-portal" style="font-size:10px;color:var(--muted)"></div>
       </div>
     </div>
+    <!-- PROJECT SELECTOR -->
+    <div style="padding:10px 12px 8px;border-bottom:1px solid var(--border)">
+      <div id="sb-proj-label" style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px"></div>
+      <div style="position:relative">
+        <select id="projSelect" onchange="onProjChange(this)" style="width:100%;background:var(--card2);border:1px solid var(--border);
+          color:var(--text);border-radius:8px;padding:7px 28px 7px 10px;font-size:12px;font-weight:600;
+          outline:none;-webkit-appearance:none;cursor:pointer">
+          <option value="TB48201" disabled style="color:#4b5563">TB48201</option>
+          <option value="NS45876" disabled style="color:#4b5563">NS45876</option>
+          <option value="WE70486" disabled style="color:#4b5563">WE70486</option>
+          <option value="HM13865" disabled style="color:#4b5563">HM13865</option>
+          <option value="CY52600" disabled style="color:#4b5563">CY52600</option>
+          <option value="RZ37480" disabled style="color:#4b5563">RZ37480</option>
+          <option value="AX28695" disabled style="color:#4b5563">AX28695</option>
+          <option value="JN97796" disabled style="color:#4b5563">JN97796</option>
+          <option value="VD10846" disabled style="color:#4b5563">VD10846</option>
+          <option value="EV51977" disabled style="color:#4b5563">EV51977</option>
+          <option value="SA98483" disabled style="color:#4b5563">SA98483</option>
+          <option value="KQ11040" disabled style="color:#4b5563">KQ11040</option>
+          <option value="DW94914" selected>DW94914</option>
+          <option value="PX12356" disabled style="color:#4b5563">PX12356</option>
+          <option value="GT20972" disabled style="color:#4b5563">GT20972</option>
+          <option value="LP40408" disabled style="color:#4b5563">LP40408</option>
+          <option value="MR58255" disabled style="color:#4b5563">MR58255</option>
+        </select>
+        <div style="position:absolute;right:9px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted);font-size:10px">▾</div>
+      </div>
+    </div>
+
     <nav>
       <div class="nav-item active" id="n-ov" onclick="go('ov')"><span class="nav-icon">📊</span><span id="nav-ov"></span></div>
       <div class="nav-item" id="n-dy" onclick="go('dy')"><span class="nav-icon">📅</span><span id="nav-dy"></span></div>
@@ -170,6 +199,8 @@ const T = {
     'lang.toggle':     '切换中文',
     // sidebar
     'sb.portal':       'Admin Portal',
+    'sb.proj.label':   'Project',
+    'sb.proj.noperm':  'You do not have permission to view this.',
     'sb.role':         'Administrator',
     'sb.logout':       'Logout',
     'nav.ov':          'Overview',
@@ -178,8 +209,12 @@ const T = {
     'nav.lp':          'Landing Pages',
     'nav.ap':          'API Keys',
     // overview
+    'ov.date.label':   'Date Range:',
+    'ov.date.range':   '20260103 — 26260312',
+    'ov.date.noperm':  'You are not authorized.',
     'ov.title':        'Overview',
     'ov.sub':          'Facebook Ads · Fan Acquisition · Jan 3 – Mar 12, 2026',
+
     'ov.total':        'Total Fans (69 days)',
     'ov.total.sub':    'Jan 3 – Mar 12, 2026',
     'ov.avg':          'Daily Average',
@@ -239,6 +274,7 @@ const T = {
     'wa.badge.cur':    'Current',
     'wa.badge.banned': 'Banned',
     // lp
+    'lp.noperm':       'You are not authorized.',
     'lp.title':        'Landing Pages',
     'lp.sub':          (n) => `Manage ad destination URLs · ${n} active`,
     'lp.add':          '+ Add Landing Page',
@@ -292,6 +328,8 @@ const T = {
     'login.err':       '✕ 账号或密码错误，请重试。',
     'lang.toggle':     'Switch to English',
     'sb.portal':       '管理后台',
+    'sb.proj.label':   '项目名称',
+    'sb.proj.noperm':  '您没有查看权限',
     'sb.role':         '管理员',
     'sb.logout':       '退出',
     'nav.ov':          '概览',
@@ -299,6 +337,9 @@ const T = {
     'nav.wa':          'WhatsApp 号码',
     'nav.lp':          '落地页',
     'nav.ap':          'API 密钥',
+    'ov.date.label':   '请选择日期：',
+    'ov.date.range':   '20260103 — 26260312',
+    'ov.date.noperm':  '您无权操作',
     'ov.title':        '概览',
     'ov.sub':          'Facebook 广告 · 粉丝获取 · 2026年1月3日 – 3月12日',
     'ov.total':        '总粉量（69天）',
@@ -357,6 +398,7 @@ const T = {
     'wa.badge.stable': '稳定',
     'wa.badge.cur':    '使用中',
     'wa.badge.banned': '已封号',
+    'lp.noperm':       '您无权操作',
     'lp.title':        '落地页',
     'lp.sub':          (n) => `管理广告目标链接 · ${n} 个已激活`,
     'lp.add':          '+ 添加落地页',
@@ -428,8 +470,9 @@ function applyStaticLang() {
   if (lerr && lerr.style.display !== 'none') lerr.textContent = t('login.err');
   document.getElementById('loginLangBtn').textContent = t('lang.toggle');
   // Sidebar
-  s('sb-portal',  t('sb.portal'));
-  s('sb-role',    t('sb.role'));
+  s('sb-portal',      t('sb.portal'));
+  s('sb-proj-label',  t('sb.proj.label'));
+  s('sb-role',        t('sb.role'));
   s('sb-logout',  t('sb.logout'));
   s('nav-ov',     t('nav.ov'));
   s('nav-dy',     t('nav.dy'));
@@ -464,7 +507,7 @@ const PREFIXES=['610','612','613','614','615','616','617','620','621','622','623
 function mkPhone(seed){
   const pre=PREFIXES[Math.floor(srng(seed*13+1)*PREFIXES.length)];
   const tail=String(Math.floor(srng(seed*17+3)*900+100)).padStart(3,'0');
-  return `+212 ${pre}-****-${tail}`;
+  return `+212 ${pre}-***-${tail}`;
 }
 
 const EMP_BANS=[
@@ -501,11 +544,10 @@ for(let day=0;day<N_DAYS;day++){
   active.forEach((n,i)=>{if(n)n.fans+=dist[i];});
 }
 
-const _lp1=Math.floor(TOTAL_A*0.42),_lp2=Math.floor(TOTAL_A*0.37),_lp3=TOTAL_A-_lp1-_lp2;
+const _lp1=Math.floor(TOTAL_A*0.67),_lp2=TOTAL_A-_lp1;
 let lpData=[
-  {id:1,label:'Undress LP — K26M55',url:'https://b.sweetheart.chat/undress2?td_channelid=K26M55',status:'active',  fans:_lp1,created:'2025-12-28'},
-  {id:2,label:'Undress LP — TK9XR3',url:'https://b.sweetheart.chat/undress2?td_channelid=TK9XR3',status:'active',  fans:_lp2,created:'2026-01-01'},
-  {id:3,label:'Undress LP — OLD001',url:'https://b.sweetheart.chat/undress2?td_channelid=OLD001',status:'inactive',fans:_lp3,created:'2025-12-15'},
+  {id:1,label:'Side Work',  url:'https://desirex.my.canva.site/sidework',   status:'inactive',fans:_lp1,created:'2026-01-03'},
+  {id:2,label:'Side Hustle',url:'https://desirex.my.canva.site/sidehustle', status:'inactive',fans:_lp2,created:'2026-01-19'},
 ];
 let lpNextId=4;
 
@@ -551,8 +593,19 @@ function rOv(){
   const el=document.getElementById('v-ov');
   const avgDay=Math.round(TOTAL_A/N_DAYS), peaked=DAILY.indexOf(Math.max(...DAILY));
   el.innerHTML=`
-    <div class="section-title">${t('ov.title')}</div>
-    <div class="section-sub">${t('ov.sub')}</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px">
+      <div>
+        <div class="section-title">${t('ov.title')}</div>
+        <div style="font-size:13px;color:var(--muted)">${t('ov.sub')}</div>
+      </div>
+      <div onclick="alert(t('ov.date.noperm'))" style="cursor:pointer;background:var(--card2);border:1px solid var(--border);
+        border-radius:8px;padding:6px 12px;font-size:12px;color:var(--muted);white-space:nowrap;user-select:none;
+        display:flex;align-items:center;gap:6px">
+        <span>📅</span>
+        <span>${t('ov.date.label')} <span style="color:#374151;font-weight:600">${t('ov.date.range')}</span></span>
+        <span style="font-size:10px">▾</span>
+      </div>
+    </div>
     <div class="grid-4">
       <div class="stat-card">
         <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">${t('ov.total')}</div>
@@ -782,7 +835,7 @@ function rLp(){
         <div class="section-title">${t('lp.title')}</div>
         <div class="section-sub" style="margin-bottom:0">${t('lp.sub',ac)}</div>
       </div>
-      <button class="btn-primary" style="width:auto;padding:9px 18px;font-size:13px" onclick="showLpForm()">${t('lp.add')}</button>
+      <button class="btn-primary" style="width:auto;padding:9px 18px;font-size:13px" onclick="alert(t('lp.noperm'))">${t('lp.add')}</button>
     </div>
     <div id="lpForm" style="display:none" class="card" style="margin-bottom:16px">
       <div style="font-size:14px;font-weight:600;margin-bottom:14px">${t('lp.form.title')}</div>
@@ -815,9 +868,9 @@ function rLp(){
             <div style="font-size:11px;color:var(--muted);margin-top:3px">${t('lp.created')}: ${lp.created} &nbsp;·&nbsp; ${t('lp.fans')}: <strong style="color:var(--text)">${N(lp.fans)}</strong></div>
           </div>
           <div style="display:flex;gap:6px;flex-shrink:0">
-            <button class="btn-sm" onclick="toggleLp(${i})">${lp.status==='active'?t('lp.deactivate'):t('lp.activate')}</button>
-            <button class="btn-sm" onclick="editLp(${i})">${t('lp.edit')}</button>
-            <button class="btn-sm btn-danger" onclick="delLp(${i})">${t('lp.delete')}</button>
+            <button class="btn-sm" onclick="alert(t('lp.noperm'))">${lp.status==='active'?t('lp.deactivate'):t('lp.activate')}</button>
+            <button class="btn-sm" onclick="alert(t('lp.noperm'))">${t('lp.edit')}</button>
+            <button class="btn-sm btn-danger" onclick="alert(t('lp.noperm'))">${t('lp.delete')}</button>
           </div>
         </div>`).join('')}
     </div>
@@ -903,6 +956,16 @@ function revealTok(i){
   const m=document.getElementById('tokMsg'+i);
   m.textContent=t('ap.noperm'); m.style.display='block';
   setTimeout(()=>{m.style.display='none';},3500);
+}
+
+// ═══════════════════════════════════════════════
+// PROJECT SELECTOR
+// ═══════════════════════════════════════════════
+function onProjChange(sel) {
+  if (sel.value !== 'DW94914') {
+    alert(t('sb.proj.noperm'));
+    sel.value = 'DW94914';
+  }
 }
 
 // ═══════════════════════════════════════════════
