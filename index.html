@@ -306,13 +306,13 @@ const T = {
     'nav.ap':          'API Keys',
     // overview
     'ov.date.label':   'Date Range:',
-    'ov.date.range':   '20260103 — 26260312',
+    'ov.date.range':   '20260103 — 20260323',
     'ov.date.noperm':  'You are not authorized.',
     'ov.title':        'Overview',
-    'ov.sub':          'Facebook Ads · Fan Acquisition · Jan 3 – Mar 12, 2026',
+    'ov.sub':          'Facebook Ads · Fan Acquisition · Jan 3 – Mar 23, 2026',
 
-    'ov.total':        'Total Fans (69 days)',
-    'ov.total.sub':    'Jan 3 – Mar 12, 2026',
+    'ov.total':        'Total Fans (80 days)',
+    'ov.total.sub':    'Jan 3 – Mar 23, 2026',
     'ov.avg':          'Daily Average',
     'ov.avg.sub':      'fans / day',
     'ov.peak':         'Peak Day',
@@ -331,12 +331,12 @@ const T = {
     'chart.fans':      'Fans',
     // daily
     'dy.title':        'Daily Data',
-    'dy.sub':          'Full log of all 69 acquisition days',
+    'dy.sub':          'Full log of all 80 acquisition days',
     'dy.jump':         'Jump to date',
     'dy.sel':          'Selected Date',
     'dy.day':          'Fans on Day',
     'dy.cum':          'Cumulative to Date',
-    'dy.grand':        'Grand Total (69d)',
+    'dy.grand':        'Grand Total (80d)',
     'dy.log':          'Complete Daily Log',
     'dy.col.no':       '#',
     'dy.col.date':     'Date',
@@ -344,7 +344,7 @@ const T = {
     'dy.col.fans':     'Fans',
     'dy.col.cum':      'Cumulative',
     'dy.col.period':   'Period',
-    'dy.total':        'Total (69 days)',
+    'dy.total':        'Total (80 days)',
     'dy.dow':          ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
     'dy.months':       ['January','February','March'],
     // wa
@@ -437,12 +437,12 @@ const T = {
     'nav.lp':          '落地页',
     'nav.ap':          'API 密钥',
     'ov.date.label':   '请选择日期：',
-    'ov.date.range':   '20260103 — 26260312',
+    'ov.date.range':   '20260103 — 20260323',
     'ov.date.noperm':  '您无权操作',
     'ov.title':        '概览',
-    'ov.sub':          'Facebook 广告 · 粉丝获取 · 2026年1月3日 – 3月12日',
-    'ov.total':        '总粉量（69天）',
-    'ov.total.sub':    '2026.01.03 – 2026.03.12',
+    'ov.sub':          'Facebook 广告 · 粉丝获取 · 2026年1月3日 – 3月23日',
+    'ov.total':        '总粉量（80天）',
+    'ov.total.sub':    '2026.01.03 – 2026.03.23',
     'ov.avg':          '日均粉量',
     'ov.avg.sub':      '粉 / 天',
     'ov.peak':         '峰值日',
@@ -460,12 +460,12 @@ const T = {
     'ov.nh.confirmed': '✓ 已确认',
     'chart.fans':      '粉量',
     'dy.title':        '日期数据',
-    'dy.sub':          '全部69天引流数据完整记录',
+    'dy.sub':          '全部80天引流数据完整记录',
     'dy.jump':         '跳转至日期',
     'dy.sel':          '所选日期',
     'dy.day':          '当日粉量',
     'dy.cum':          '截至当日累计',
-    'dy.grand':        '总计（69天）',
+    'dy.grand':        '总计（80天）',
     'dy.log':          '完整每日数据记录',
     'dy.col.no':       '序号',
     'dy.col.date':     '日期',
@@ -473,7 +473,7 @@ const T = {
     'dy.col.fans':     '粉量',
     'dy.col.cum':      '累计',
     'dy.col.period':   '月份',
-    'dy.total':        '合计（69天）',
+    'dy.total':        '合计（80天）',
     'dy.dow':          ['周日','周一','周二','周三','周四','周五','周六'],
     'dy.months':       ['一月','二月','三月'],
     'wa.title':        'WhatsApp 号码',
@@ -597,7 +597,7 @@ function srng(s) {
   return ((s ^ (s >>> 16)) >>> 0) / 4294967296;
 }
 
-const N_DAYS = 69;
+const N_DAYS = 80;
 const T0 = new Date('2026-01-03T00:00:00Z');
 function d2s(idx) { const d=new Date(T0); d.setUTCDate(d.getUTCDate()+idx); return d.toISOString().slice(0,10); }
 function s2i(str) { return Math.round((new Date(str)-T0)/86400000); }
@@ -852,7 +852,7 @@ function rDy(){
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <label style="font-size:12px;color:var(--muted)">${t('dy.jump')}</label>
-        <input type="date" class="inp-sm" value="${selDate}" min="2026-01-03" max="2026-03-12"
+        <input type="date" class="inp-sm" value="${selDate}" min="2026-01-03" max="2026-03-23"
           onchange="selDate=this.value;rDy()" style="width:150px">
       </div>
     </div>
