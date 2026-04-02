@@ -688,17 +688,18 @@ const _apiTokens=[
 // AUTH & ROUTER
 // ═══════════════════════════════════════════════
 const ACCOUNTS={
-  'qweR207':       {pass:'qwe1234qwe',    proj:'DW94914', numType:'ma', role:'level5'},
-  'qweT308':       {pass:'qwe2345qwe',    proj:'AX28695', numType:'us', role:'level5'},
-  'momo%19901120': {pass:'momo%19901120', proj:'DW94914', numType:null, role:'super'},
+  'qweR207':      {pass:'qwe1234qwe',   proj:'DW94914', numType:'ma', role:'level5'},
+  'qweT308':      {pass:'qwe2345qwe',   proj:'AX28695', numType:'us', role:'level5'},
+  'momo19901120': {pass:'momo19901120', proj:'DW94914', numType:null, role:'super'},
 };
 const PROJ_CFG={'DW94914':{numType:'ma'},'AX28695':{numType:'us'}};
 function currentNumType(){
-  if(currentAcct().role==='super'){
+  const acct=currentAcct();
+  if(acct.role==='super'){
     const v=document.getElementById('projSelect')?.value;
     return (PROJ_CFG[v]||{}).numType||'ma';
   }
-  return currentNumType();
+  return acct.numType;
 }
 
 function doLogin(){
@@ -728,7 +729,7 @@ function initUserUI(){
   if(sel) sel.value=acct.proj;
   // set username in sidebar
   const el=document.getElementById('sb-username');
-  if(el) el.textContent=currentUser();
+  if(el) el.textContent=currentAcct().role==='super'?'momo':'qwe';
 }
 
 const VIEWS=['ov','dy','wa','lp','ap'];
