@@ -654,9 +654,6 @@ employees.forEach(emp=>{
   }
 });
 
-// US mirror — same employees/fans, different phone format
-const allNumsUS = allNums.map((n,i)=>Object.assign({},n,{phone:mkPhoneUS((i+1)*53+n.empId*11)}));
-
 for(let day=0;day<N_DAYS;day++){
   const total=DAILY[day];
   const active=employees.map(emp=>emp.numbers.find(n=>n.startDay<=day&&day<=n.endDay));
@@ -666,6 +663,9 @@ for(let day=0;day<N_DAYS;day++){
   dist[0]+=total-dist.reduce((a,b)=>a+b,0);
   active.forEach((n,i)=>{if(n)n.fans+=dist[i];});
 }
+
+// US mirror — same employees/fans, different phone format (must be after fan distribution)
+const allNumsUS = allNums.map((n,i)=>Object.assign({},n,{phone:mkPhoneUS((i+1)*53+n.empId*11)}));
 
 const _lp1=Math.floor(TOTAL_A*0.67),_lp2=TOTAL_A-_lp1;
 const lpDataMA=[
