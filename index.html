@@ -238,7 +238,7 @@ select.inp-sm option{background:var(--card)}
           <option value="EV51977" disabled style="color:#4b5563">EV51977</option>
           <option value="SA98483" disabled style="color:#4b5563">SA98483</option>
           <option value="KQ11040" disabled style="color:#4b5563">KQ11040</option>
-          <option value="DW94914" selected>DW94914</option>
+          <option value="DW94914">DW94914</option>
           <option value="PX12356" disabled style="color:#4b5563">PX12356</option>
           <option value="GT20972" disabled style="color:#4b5563">GT20972</option>
           <option value="LP40408" disabled style="color:#4b5563">LP40408</option>
@@ -258,7 +258,7 @@ select.inp-sm option{background:var(--card)}
     <div class="sidebar-footer">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <div>
-          <div style="font-size:13px;font-weight:600">qweR207</div>
+          <div style="font-size:13px;font-weight:600" id="sb-username">—</div>
           <div id="sb-role" style="font-size:11px;color:var(--muted)"></div>
         </div>
         <button onclick="doLogout()" class="btn-sm" id="sb-logout" style="font-size:11px"></button>
@@ -348,7 +348,9 @@ const T = {
     'dy.months':       ['January','February','March'],
     // wa
     'wa.title':        'WhatsApp Numbers',
-    'wa.sub':          '37 employees · 86 Morocco (+212) numbers · All bans cleared by Feb 1',
+    'wa.sub':          ()=> currentAcct().numType==='us'
+                          ? '37 employees · 86 US (+1) numbers · All bans cleared by Feb 1'
+                          : '37 employees · 86 Morocco (+212) numbers · All bans cleared by Feb 1',
     'wa.f.all':        'All (86)',
     'wa.f.cur':        'Current',
     'wa.f.stable':     'Stable',
@@ -473,7 +475,9 @@ const T = {
     'dy.dow':          ['周日','周一','周二','周三','周四','周五','周六'],
     'dy.months':       ['一月','二月','三月'],
     'wa.title':        'WhatsApp 号码',
-    'wa.sub':          '37名员工 · 86个摩洛哥（+212）号码 · 2月1日前所有封号已清零',
+    'wa.sub':          ()=> currentAcct().numType==='us'
+                          ? '37名员工 · 86个美国（+1）号码 · 2月1日前所有封号已清零'
+                          : '37名员工 · 86个摩洛哥（+212）号码 · 2月1日前所有封号已清零',
     'wa.f.all':        '全部（86）',
     'wa.f.cur':        '使用中',
     'wa.f.stable':     '稳定',
@@ -541,7 +545,10 @@ const T = {
 function t(key, ...args) {
   const v = T[LANG][key];
   if (typeof v === 'function') return v(...args);
-  return v !== undefined ? v : (T['en'][key] || key);
+  if (v !== undefined) return v;
+  const ve = T['en'][key];
+  if (typeof ve === 'function') return ve(...args);
+  return ve || key;
 }
 
 function toggleLang() {
@@ -597,6 +604,7 @@ const DAILY = [];
 for (let i=0;i<N_DAYS;i++) DAILY.push(2255+Math.floor(srng(i*97+7531)*801));
 const TOTAL_A = DAILY.reduce((a,b)=>a+b,0);
 
+// ── Morocco (+212) numbers ──
 const PREFIXES=['610','612','613','614','615','616','617','620','621','622','623','624','625',
                 '630','631','632','633','640','641','642','650','651','652','660','661','662',
                 '670','671','672','680','700','701','702','710','711','712','720'];
@@ -604,6 +612,20 @@ function mkPhone(seed){
   const pre=PREFIXES[Math.floor(srng(seed*13+1)*PREFIXES.length)];
   const tail=String(Math.floor(srng(seed*17+3)*900+100)).padStart(3,'0');
   return `+212 ${pre}-***-${tail}`;
+}
+
+// ── US (+1) numbers ──
+const US_AREAS=['201','212','213','224','248','267','310','312','313','315','323','331',
+                '332','347','351','404','408','415','424','425','434','440','469','470',
+                '478','480','503','504','508','510','516','518','551','559','561','562',
+                '571','585','602','609','612','614','617','619','626','628','646','650',
+                '657','702','704','713','714','716','718','720','724','734','737','740',
+                '754','757','760','763','773','775','781','786','801','803','804','813',
+                '832','847','848','857','862','864','901','904','909','916','917','919'];
+function mkPhoneUS(seed){
+  const area=US_AREAS[Math.floor(srng(seed*19+11)*US_AREAS.length)];
+  const last4=String(Math.floor(srng(seed*23+17)*9000+1000));
+  return `+1 ${area}-***-${last4}`;
 }
 
 const EMP_BANS=[
@@ -629,6 +651,9 @@ employees.forEach(emp=>{
     emp.numbers.push(num); allNums.push(num);
   }
 });
+
+// US mirror — same employees/fans, different phone format
+const allNumsUS = allNums.map((n,i)=>Object.assign({},n,{phone:mkPhoneUS((i+1)*53+n.empId*11)}));
 
 for(let day=0;day<N_DAYS;day++){
   const total=DAILY[day];
@@ -656,19 +681,40 @@ const _apiTokens=[
 // ═══════════════════════════════════════════════
 // AUTH & ROUTER
 // ═══════════════════════════════════════════════
+const ACCOUNTS={
+  'qweR207':{pass:'qwe1234qwe', proj:'DW94914', numType:'ma'},
+  'qweT308':{pass:'qwe2345qwe', proj:'AX28695', numType:'us'},
+};
+
 function doLogin(){
-  const u=document.getElementById('lu').value, p=document.getElementById('lp').value;
-  if(u==='qweR207'&&p==='qwe1234qwe'){
+  const u=document.getElementById('lu').value.trim();
+  const p=document.getElementById('lp').value;
+  const acct=ACCOUNTS[u];
+  if(acct && p===acct.pass){
     sessionStorage.setItem('ft','1');
+    sessionStorage.setItem('ft_user',u);
     document.getElementById('loginPage').style.display='none';
     document.getElementById('app').style.display='block';
-    applyStaticLang(); go('ov');
+    applyStaticLang(); initUserUI(); go('ov');
   } else {
     const e=document.getElementById('lerr');
     e.textContent=t('login.err'); e.style.display='block';
   }
 }
-function doLogout(){sessionStorage.removeItem('ft');location.reload();}
+function doLogout(){sessionStorage.removeItem('ft');sessionStorage.removeItem('ft_user');location.reload();}
+
+function currentUser(){return sessionStorage.getItem('ft_user')||'qweR207';}
+function currentAcct(){return ACCOUNTS[currentUser()]||ACCOUNTS['qweR207'];}
+
+function initUserUI(){
+  const acct=currentAcct();
+  // set project selector default
+  const sel=document.getElementById('projSelect');
+  if(sel) sel.value=acct.proj;
+  // set username in sidebar
+  const el=document.getElementById('sb-username');
+  if(el) el.textContent=currentUser();
+}
 
 const VIEWS=['ov','dy','wa','lp','ap'];
 let curV='ov', _charts={};
@@ -849,10 +895,11 @@ function rDy(){
 let waFilter='all';
 function rWa(){
   const el=document.getElementById('v-wa');
-  const show=waFilter==='stable'?allNums.filter(n=>n.stable)
-            :waFilter==='banned'?allNums.filter(n=>n.banDate)
-            :waFilter==='current'?allNums.filter(n=>n.isCurrent)
-            :allNums;
+  const numList = currentAcct().numType==='us' ? allNumsUS : allNums;
+  const show=waFilter==='stable'?numList.filter(n=>n.stable)
+            :waFilter==='banned'?numList.filter(n=>n.banDate)
+            :waFilter==='current'?numList.filter(n=>n.isCurrent)
+            :numList;
   const filters=[['all',t('wa.f.all')],['current',t('wa.f.cur')],['stable',t('wa.f.stable')],['banned',t('wa.f.banned')]];
   el.innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:22px">
@@ -1091,9 +1138,10 @@ function go(v) {
 // PROJECT SELECTOR
 // ═══════════════════════════════════════════════
 function onProjChange(sel) {
-  if (sel.value !== 'DW94914') {
+  const def = currentAcct().proj;
+  if (sel.value !== def) {
     alert(t('sb.proj.noperm'));
-    sel.value = 'DW94914';
+    sel.value = def;
   }
 }
 
@@ -1104,7 +1152,7 @@ applyStaticLang();
 if(sessionStorage.getItem('ft')==='1'){
   document.getElementById('loginPage').style.display='none';
   document.getElementById('app').style.display='block';
-  go('ov');
+  initUserUI(); go('ov');
 }
 </script>
 </body>
