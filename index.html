@@ -296,7 +296,8 @@ const T = {
     'sb.portal':       'Admin Portal',
     'sb.proj.label':   'Project',
     'sb.proj.noperm':  'You do not have permission to view this.',
-    'sb.role':         'Administrator',
+    'sb.role.super':   'Super Admin',
+    'sb.role.l5':      'Level 5 Admin',
     'sb.logout':       'Logout',
     'nav.ov':          'Overview',
     'nav.dy':          'Daily Data',
@@ -316,7 +317,7 @@ const T = {
     'ov.avg.sub':      'fans / day',
     'ov.peak':         'Peak Day',
     'ov.ops':          'Active Operators',
-    'ov.ops.sub':      ()=> currentAcct().numType==='us' ? '86 US numbers' : '86 Morocco numbers',
+    'ov.ops.sub':      ()=> currentNumType()==='us' ? '86 US numbers' : '86 Morocco numbers',
     'ov.trend':        'Daily Fan Acquisition Trend',
     'ov.range':        '2,255 – 3,055 range',
     'ov.lp.bk':        'Landing Page Breakdown',
@@ -348,7 +349,7 @@ const T = {
     'dy.months':       ['January','February','March'],
     // wa
     'wa.title':        'WhatsApp Numbers',
-    'wa.sub':          ()=> currentAcct().numType==='us'
+    'wa.sub':          ()=> currentNumType()==='us'
                           ? '37 employees · 86 US (+1) numbers · All bans cleared by Feb 1'
                           : '37 employees · 86 Morocco (+212) numbers · All bans cleared by Feb 1',
     'wa.f.all':        'All (86)',
@@ -427,7 +428,8 @@ const T = {
     'sb.portal':       '管理后台',
     'sb.proj.label':   '项目名称',
     'sb.proj.noperm':  '您没有查看权限',
-    'sb.role':         '管理员',
+    'sb.role.super':   '超级管理员',
+    'sb.role.l5':      '五级管理员',
     'sb.logout':       '退出',
     'nav.ov':          '概览',
     'nav.dy':          '日期数据',
@@ -445,7 +447,7 @@ const T = {
     'ov.avg.sub':      '粉 / 天',
     'ov.peak':         '峰值日',
     'ov.ops':          '在线运营员工',
-    'ov.ops.sub':      ()=> currentAcct().numType==='us' ? '86个美国号码' : '86个摩洛哥号码',
+    'ov.ops.sub':      ()=> currentNumType()==='us' ? '86个美国号码' : '86个摩洛哥号码',
     'ov.trend':        '每日粉丝获取趋势',
     'ov.range':        '区间：2,255 – 3,055',
     'ov.lp.bk':        '落地页流量分布',
@@ -475,7 +477,7 @@ const T = {
     'dy.dow':          ['周日','周一','周二','周三','周四','周五','周六'],
     'dy.months':       ['一月','二月','三月'],
     'wa.title':        'WhatsApp 号码',
-    'wa.sub':          ()=> currentAcct().numType==='us'
+    'wa.sub':          ()=> currentNumType()==='us'
                           ? '37名员工 · 86个美国（+1）号码 · 2月1日前所有封号已清零'
                           : '37名员工 · 86个摩洛哥（+212）号码 · 2月1日前所有封号已清零',
     'wa.f.all':        '全部（86）',
@@ -575,7 +577,7 @@ function applyStaticLang() {
   // Sidebar
   s('sb-portal',      t('sb.portal'));
   s('sb-proj-label',  t('sb.proj.label'));
-  s('sb-role',        t('sb.role'));
+  s('sb-role', currentAcct().role==='super' ? t('sb.role.super') : t('sb.role.l5'));
   s('sb-logout',  t('sb.logout'));
   s('nav-ov',     t('nav.ov'));
   s('nav-dy',     t('nav.dy'));
@@ -673,7 +675,7 @@ const lpDataMA=[
 const lpDataUS=[
   {id:1,label:'Dating in USA',url:'https://desirex.my.canva.site/datinginusa',status:'inactive',fans:TOTAL_A,created:'2026-01-03'},
 ];
-function getLpData(){return currentAcct().numType==='us'?lpDataUS:lpDataMA;}
+function getLpData(){return currentNumType()==='us'?lpDataUS:lpDataMA;}
 let lpNextId=4;
 
 const _apiTokens=[
@@ -686,9 +688,18 @@ const _apiTokens=[
 // AUTH & ROUTER
 // ═══════════════════════════════════════════════
 const ACCOUNTS={
-  'qweR207':{pass:'qwe1234qwe', proj:'DW94914', numType:'ma'},
-  'qweT308':{pass:'qwe2345qwe', proj:'AX28695', numType:'us'},
+  'qweR207':       {pass:'qwe1234qwe',    proj:'DW94914', numType:'ma', role:'level5'},
+  'qweT308':       {pass:'qwe2345qwe',    proj:'AX28695', numType:'us', role:'level5'},
+  'momo%19901120': {pass:'momo%19901120', proj:'DW94914', numType:null, role:'super'},
 };
+const PROJ_CFG={'DW94914':{numType:'ma'},'AX28695':{numType:'us'}};
+function currentNumType(){
+  if(currentAcct().role==='super'){
+    const v=document.getElementById('projSelect')?.value;
+    return (PROJ_CFG[v]||{}).numType||'ma';
+  }
+  return currentNumType();
+}
 
 function doLogin(){
   const u=document.getElementById('lu').value.trim();
@@ -899,7 +910,7 @@ function rDy(){
 let waFilter='all';
 function rWa(){
   const el=document.getElementById('v-wa');
-  const numList = currentAcct().numType==='us' ? allNumsUS : allNums;
+  const numList = currentNumType()==='us' ? allNumsUS : allNums;
   const show=waFilter==='stable'?numList.filter(n=>n.stable)
             :waFilter==='banned'?numList.filter(n=>n.banDate)
             :waFilter==='current'?numList.filter(n=>n.isCurrent)
@@ -1142,6 +1153,7 @@ function go(v) {
 // PROJECT SELECTOR
 // ═══════════════════════════════════════════════
 function onProjChange(sel) {
+  if(currentAcct().role==='super'){go(curV);return;}
   const def = currentAcct().proj;
   if (sel.value !== def) {
     alert(t('sb.proj.noperm'));
