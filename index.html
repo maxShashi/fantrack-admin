@@ -726,7 +726,14 @@ function initUserUI(){
   const acct=currentAcct();
   // set project selector default
   const sel=document.getElementById('projSelect');
-  if(sel) sel.value=acct.proj;
+  if(sel){
+    sel.value=acct.proj;
+    // super admin: unlock real project options
+    ['DW94914','AX28695'].forEach(pid=>{
+      const opt=sel.querySelector(`option[value="${pid}"]`);
+      if(opt) opt.disabled = acct.role!=='super';
+    });
+  }
   // set username in sidebar
   const el=document.getElementById('sb-username');
   if(el) el.textContent=currentAcct().role==='super'?'momo':'qwe';
