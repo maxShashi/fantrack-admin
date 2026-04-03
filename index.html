@@ -254,6 +254,7 @@ select.inp-sm option{background:var(--card)}
       <div class="nav-item" id="n-wa" onclick="go('wa')"><span class="nav-icon">📱</span><span id="nav-wa"></span></div>
       <div class="nav-item" id="n-lp" onclick="go('lp')"><span class="nav-icon">🔗</span><span id="nav-lp"></span></div>
       <div class="nav-item" id="n-ap" onclick="go('ap')"><span class="nav-icon">🔑</span><span id="nav-ap"></span></div>
+      <div class="nav-item" id="n-mg" onclick="go('mg')" style="display:none"><span class="nav-icon">⚙️</span><span id="nav-mg"></span></div>
     </nav>
     <div class="sidebar-footer">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -272,6 +273,7 @@ select.inp-sm option{background:var(--card)}
     <div id="v-wa" style="display:none"></div>
     <div id="v-lp" style="display:none"></div>
     <div id="v-ap" style="display:none"></div>
+    <div id="v-mg" style="display:none"></div>
   </div>
 </div>
 
@@ -298,6 +300,9 @@ const T = {
     'sb.proj.noperm':  'You do not have permission to view this.',
     'sb.role.super':   'Super Admin',
     'sb.role.l5':      'Level 5 Admin',
+    'nav.mg':          'Management',
+    'mg.title':        'Management',
+    'mg.sub':          'System-level access · Super Admin only',
     'sb.logout':       'Logout',
     'nav.ov':          'Overview',
     'nav.dy':          'Daily Data',
@@ -430,6 +435,9 @@ const T = {
     'sb.proj.noperm':  '您没有查看权限',
     'sb.role.super':   '超级管理员',
     'sb.role.l5':      '五级管理员',
+    'nav.mg':          '管理',
+    'mg.title':        '管理',
+    'mg.sub':          '系统级权限 · 仅超级管理员可见',
     'sb.logout':       '退出',
     'nav.ov':          '概览',
     'nav.dy':          '日期数据',
@@ -584,6 +592,7 @@ function applyStaticLang() {
   s('nav-wa',     t('nav.wa'));
   s('nav-lp',     t('nav.lp'));
   s('nav-ap',     t('nav.ap'));
+  s('nav-mg',     t('nav.mg'));
   document.getElementById('appLangBtn').textContent = t('lang.toggle');
 }
 
@@ -737,9 +746,11 @@ function initUserUI(){
   // set username in sidebar
   const el=document.getElementById('sb-username');
   if(el) el.textContent=currentAcct().role==='super'?'momo':'qwe';
+  const mgNav=document.getElementById('n-mg');
+  if(mgNav) mgNav.style.display=currentAcct().role==='super'?'flex':'none';
 }
 
-const VIEWS=['ov','dy','wa','lp','ap'];
+const VIEWS=['ov','dy','wa','lp','ap','mg'];
 let curV='ov', _charts={};
 function N(n){return n.toLocaleString('en-US');}
 
@@ -1154,7 +1165,35 @@ function go(v) {
     document.getElementById('n-' + x).classList.toggle('active', x === v);
   });
   if (isMobile()) closeSidebar();
-  ({ov:rOv, dy:rDy, wa:rWa, lp:rLp, ap:rAp})[v]();
+  ({ov:rOv, dy:rDy, wa:rWa, lp:rLp, ap:rAp, mg:rMg})[v]();
+}
+
+// ═══════════════════════════════════════════════
+// MANAGEMENT (super admin only)
+// ═══════════════════════════════════════════════
+function rMg(){
+  document.getElementById('v-mg').innerHTML=`
+    <div style="margin-bottom:22px">
+      <div class="section-title">${t('mg.title')}</div>
+      <div class="section-sub">${t('mg.sub')}</div>
+    </div>
+    <div style="display:grid;gap:14px">
+      <div class="card" style="display:flex;align-items:center;gap:16px;padding:20px 24px">
+        <div style="width:44px;height:44px;border-radius:12px;background:rgba(168,85,247,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">👥</div>
+        <div><div style="font-weight:600;margin-bottom:3px">账号管理</div><div style="font-size:12px;color:var(--muted)">Account Management</div></div>
+        <div class="badge badge-gray" style="margin-left:auto">Coming Soon</div>
+      </div>
+      <div class="card" style="display:flex;align-items:center;gap:16px;padding:20px 24px">
+        <div style="width:44px;height:44px;border-radius:12px;background:rgba(168,85,247,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📁</div>
+        <div><div style="font-weight:600;margin-bottom:3px">项目管理</div><div style="font-size:12px;color:var(--muted)">Project Management</div></div>
+        <div class="badge badge-gray" style="margin-left:auto">Coming Soon</div>
+      </div>
+      <div class="card" style="display:flex;align-items:center;gap:16px;padding:20px 24px">
+        <div style="width:44px;height:44px;border-radius:12px;background:rgba(168,85,247,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📊</div>
+        <div><div style="font-weight:600;margin-bottom:3px">数据管理</div><div style="font-size:12px;color:var(--muted)">Data Management</div></div>
+        <div class="badge badge-gray" style="margin-left:auto">Coming Soon</div>
+      </div>
+    </div>`;
 }
 
 // ═══════════════════════════════════════════════
