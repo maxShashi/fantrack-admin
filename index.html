@@ -311,18 +311,18 @@ const T = {
     'nav.ap':          'API Keys',
     // overview
     'ov.date.label':   'Date Range:',
-    'ov.date.range':   '20260103 — 20260323',
+    'ov.date.range':   '20251113 — 20260726',
     'ov.date.noperm':  'You are not authorized.',
     'ov.title':        'Overview',
-    'ov.sub':          'Facebook Ads · Fan Acquisition · Jan 3 – Mar 23, 2026',
+    'ov.sub':          'Facebook Ads · Fan Acquisition · Nov 13, 2025 – Jul 26, 2026',
 
-    'ov.total':        'Total Fans (80 days)',
-    'ov.total.sub':    'Jan 3 – Mar 23, 2026',
+    'ov.total':        'Total Fans (256 days)',
+    'ov.total.sub':    'Nov 13, 2025 – Jul 26, 2026',
     'ov.avg':          'Daily Average',
     'ov.avg.sub':      'fans / day',
     'ov.peak':         'Peak Day',
     'ov.ops':          'Active Operators',
-    'ov.ops.sub':      ()=> currentNumType()==='us' ? '86 US numbers' : '86 Morocco numbers',
+    'ov.ops.sub':      ()=> currentNumType()==='us' ? '86 US numbers' : currentNumType()==='de' ? '86 German numbers' : '86 Morocco numbers',
     'ov.trend':        'Daily Fan Acquisition Trend',
     'ov.range':        '2,255 – 3,055 range',
     'ov.lp.bk':        'Landing Page Breakdown',
@@ -331,17 +331,17 @@ const T = {
     'ov.nh.r1':        'Replaced 1×  (1 ban)',
     'ov.nh.r2':        'Replaced 2×  (2 bans)',
     'ov.nh.r3':        'Replaced 3×  (3 bans)',
-    'ov.nh.zerobans':  'Zero bans after Feb 1, 2026',
+    'ov.nh.zerobans':  'Zero bans after Dec 1, 2025',
     'ov.nh.confirmed': '✓ Confirmed',
     'chart.fans':      'Fans',
     // daily
     'dy.title':        'Daily Data',
-    'dy.sub':          'Full log of all 80 acquisition days',
+    'dy.sub':          'Full log of all 256 acquisition days',
     'dy.jump':         'Jump to date',
     'dy.sel':          'Selected Date',
     'dy.day':          'Fans on Day',
     'dy.cum':          'Cumulative to Date',
-    'dy.grand':        'Grand Total (80d)',
+    'dy.grand':        'Grand Total (256d)',
     'dy.log':          'Complete Daily Log',
     'dy.col.no':       '#',
     'dy.col.date':     'Date',
@@ -349,14 +349,17 @@ const T = {
     'dy.col.fans':     'Fans',
     'dy.col.cum':      'Cumulative',
     'dy.col.period':   'Period',
-    'dy.total':        'Total (80 days)',
+    'dy.total':        'Total (256 days)',
     'dy.dow':          ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
-    'dy.months':       ['January','February','March'],
+    'dy.months':       ['Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'],
     // wa
     'wa.title':        'WhatsApp Numbers',
-    'wa.sub':          ()=> currentNumType()==='us'
-                          ? '37 employees · 86 US (+1) numbers · All bans cleared by Feb 1'
-                          : '37 employees · 86 Morocco (+212) numbers · All bans cleared by Feb 1',
+    'wa.sub':          ()=> {
+                            const nt=currentNumType();
+                            if(nt==='us') return '37 employees · 86 US (+1) numbers · All bans cleared by Dec 1';
+                            if(nt==='de') return '37 employees · 86 Germany (+49) numbers · All bans cleared by Dec 1';
+                            return '37 employees · 86 Morocco (+212) numbers · All bans cleared by Dec 1';
+                          },
     'wa.f.all':        'All (86)',
     'wa.f.cur':        'Current',
     'wa.f.stable':     'Stable',
@@ -445,17 +448,17 @@ const T = {
     'nav.lp':          '落地页',
     'nav.ap':          'API 密钥',
     'ov.date.label':   '请选择日期：',
-    'ov.date.range':   '20260103 — 20260323',
+    'ov.date.range':   '20251113 — 20260726',
     'ov.date.noperm':  '您无权操作',
     'ov.title':        '概览',
-    'ov.sub':          'Facebook 广告 · 粉丝获取 · 2026年1月3日 – 3月23日',
-    'ov.total':        '总粉量（80天）',
-    'ov.total.sub':    '2026.01.03 – 2026.03.23',
+    'ov.sub':          'Facebook 广告 · 粉丝获取 · 2025年11月13日 – 2026年7月26日',
+    'ov.total':        '总粉量（256天）',
+    'ov.total.sub':    '2025.11.13 – 2026.07.26',
     'ov.avg':          '日均粉量',
     'ov.avg.sub':      '粉 / 天',
     'ov.peak':         '峰值日',
     'ov.ops':          '在线运营员工',
-    'ov.ops.sub':      ()=> currentNumType()==='us' ? '86个美国号码' : '86个摩洛哥号码',
+    'ov.ops.sub':      ()=> currentNumType()==='us' ? '86个美国号码' : currentNumType()==='de' ? '86个德国号码' : '86个摩洛哥号码',
     'ov.trend':        '每日粉丝获取趋势',
     'ov.range':        '区间：2,255 – 3,055',
     'ov.lp.bk':        '落地页流量分布',
@@ -464,16 +467,16 @@ const T = {
     'ov.nh.r1':        '换号1次（被封1次）',
     'ov.nh.r2':        '换号2次（被封2次）',
     'ov.nh.r3':        '换号3次（被封3次）',
-    'ov.nh.zerobans':  '2026年2月1日后无封号记录',
+    'ov.nh.zerobans':  '2025年12月1日后无封号记录',
     'ov.nh.confirmed': '✓ 已确认',
     'chart.fans':      '粉量',
     'dy.title':        '日期数据',
-    'dy.sub':          '全部80天引流数据完整记录',
+    'dy.sub':          '全部256天引流数据完整记录',
     'dy.jump':         '跳转至日期',
     'dy.sel':          '所选日期',
     'dy.day':          '当日粉量',
     'dy.cum':          '截至当日累计',
-    'dy.grand':        '总计（80天）',
+    'dy.grand':        '总计（256天）',
     'dy.log':          '完整每日数据记录',
     'dy.col.no':       '序号',
     'dy.col.date':     '日期',
@@ -481,13 +484,16 @@ const T = {
     'dy.col.fans':     '粉量',
     'dy.col.cum':      '累计',
     'dy.col.period':   '月份',
-    'dy.total':        '合计（80天）',
+    'dy.total':        '合计（256天）',
     'dy.dow':          ['周日','周一','周二','周三','周四','周五','周六'],
-    'dy.months':       ['一月','二月','三月'],
+    'dy.months':       ['十一月','十二月','一月','二月','三月','四月','五月','六月','七月'],
     'wa.title':        'WhatsApp 号码',
-    'wa.sub':          ()=> currentNumType()==='us'
-                          ? '37名员工 · 86个美国（+1）号码 · 2月1日前所有封号已清零'
-                          : '37名员工 · 86个摩洛哥（+212）号码 · 2月1日前所有封号已清零',
+    'wa.sub':          ()=> {
+                            const nt=currentNumType();
+                            if(nt==='us') return '37名员工 · 86个美国（+1）号码 · 12月1日前所有封号已清零';
+                            if(nt==='de') return '37名员工 · 86个德国（+49）号码 · 12月1日前所有封号已清零';
+                            return '37名员工 · 86个摩洛哥（+212）号码 · 12月1日前所有封号已清零';
+                          },
     'wa.f.all':        '全部（86）',
     'wa.f.cur':        '使用中',
     'wa.f.stable':     '稳定',
@@ -606,8 +612,8 @@ function srng(s) {
   return ((s ^ (s >>> 16)) >>> 0) / 4294967296;
 }
 
-const N_DAYS = 80;
-const T0 = new Date('2026-01-03T00:00:00Z');
+const N_DAYS = 256;
+const T0 = new Date('2025-11-13T00:00:00Z');
 function d2s(idx) { const d=new Date(T0); d.setUTCDate(d.getUTCDate()+idx); return d.toISOString().slice(0,10); }
 function s2i(str) { return Math.round((new Date(str)-T0)/86400000); }
 
@@ -637,6 +643,23 @@ function mkPhoneUS(seed){
   const area=US_AREAS[Math.floor(srng(seed*19+11)*US_AREAS.length)];
   const last4=String(Math.floor(srng(seed*23+17)*9000+1000));
   return `+1 ${area}-***-${last4}`;
+}
+
+// ── Germany (+49) numbers ──
+const DE_AREAS=['30','40','69','89','201','202','203','208','209','211','212','213',
+                '214','215','216','217','218','219','221','223','224','225','226','228',
+                '2302','2303','2304','231','232','233','234','2351','2352','2353','2354',
+                '2355','2356','2357','2358','2359','2360','2361','2362','2363','2364',
+                '2365','2366','2367','2368','2369','2371','2372','2373','2374','2375',
+                '2376','2377','2378','2379','2381','2382','2383','2384','2385','2386',
+                '2387','2388','2389','2391','2392','2393','2394','241','242','243',
+                '244','245','246','247','248','249','251','252','253','254','255',
+                '256','257','258','259','2602','2603','2604','2605','2606','2607',
+                '261','262','263','264','265','266','267','268','269','271'];
+function mkPhoneDE(seed){
+  const area=DE_AREAS[Math.floor(srng(seed*29+13)*DE_AREAS.length)];
+  const last4=String(Math.floor(srng(seed*31+19)*9000+1000));
+  return `+49 ${area} ****${last4}`;
 }
 
 const EMP_BANS=[
@@ -676,6 +699,9 @@ for(let day=0;day<N_DAYS;day++){
 // US mirror — same employees/fans, different phone format (must be after fan distribution)
 const allNumsUS = allNums.map((n,i)=>Object.assign({},n,{phone:mkPhoneUS((i+1)*53+n.empId*11)}));
 
+// DE mirror — same employees/fans, German phone format
+const allNumsDE = allNums.map((n,i)=>Object.assign({},n,{phone:mkPhoneDE((i+1)*53+n.empId*11)}));
+
 const _lp1=Math.floor(TOTAL_A*0.67),_lp2=TOTAL_A-_lp1;
 const lpDataMA=[
   {id:1,label:'Side Work',  url:'https://desirex.my.canva.site/sidework',   status:'inactive',fans:_lp1,created:'2026-01-03'},
@@ -684,7 +710,16 @@ const lpDataMA=[
 const lpDataUS=[
   {id:1,label:'Dating in USA',url:'https://desirex.my.canva.site/datinginusa',status:'inactive',fans:TOTAL_A,created:'2026-01-03'},
 ];
-function getLpData(){return currentNumType()==='us'?lpDataUS:lpDataMA;}
+const lpDataDE=[
+  {id:1,label:'Aktien Tipps DE', url:'https://desirex.my.canva.site/aktiende',  status:'inactive',fans:_lp1,created:'2025-11-13'},
+  {id:2,label:'Börse Insider',   url:'https://desirex.my.canva.site/boerse',    status:'inactive',fans:_lp2,created:'2025-12-01'},
+];
+function getLpData(){
+  const nt=currentNumType();
+  if(nt==='us')return lpDataUS;
+  if(nt==='de')return lpDataDE;
+  return lpDataMA;
+}
 let lpNextId=4;
 
 const _apiTokens=[
@@ -699,9 +734,10 @@ const _apiTokens=[
 const ACCOUNTS={
   'qweR207':      {pass:'123456',        proj:'DW94914', numType:'ma', role:'level5'},
   'qweT308':      {pass:'123456',        proj:'AX28695', numType:'us', role:'level5'},
+  'qwer65':       {pass:'123456',        proj:'HM13865', numType:'de', role:'level5'},
   'momo19901120': {pass:'momo19901120', proj:'DW94914', numType:null, role:'super'},
 };
-const PROJ_CFG={'DW94914':{numType:'ma'},'AX28695':{numType:'us'}};
+const PROJ_CFG={'DW94914':{numType:'ma'},'AX28695':{numType:'us'},'HM13865':{numType:'de'}};
 function currentNumType(){
   const acct=currentAcct();
   if(acct.role==='super'){
@@ -738,7 +774,7 @@ function initUserUI(){
   if(sel){
     sel.value=acct.proj;
     // super admin: unlock real project options
-    ['DW94914','AX28695'].forEach(pid=>{
+    ['DW94914','AX28695','HM13865'].forEach(pid=>{
       const opt=sel.querySelector(`option[value="${pid}"]`);
       if(opt) opt.disabled = acct.role!=='super';
     });
@@ -849,7 +885,7 @@ function rOv(){
 // ═══════════════════════════════════════════════
 // DAILY DATA
 // ═══════════════════════════════════════════════
-let selDate='2026-01-03';
+let selDate='2025-11-13';
 function rDy(){
   const el=document.getElementById('v-dy');
   const idx=s2i(selDate), fans=(idx>=0&&idx<N_DAYS)?DAILY[idx]:0;
@@ -863,7 +899,7 @@ function rDy(){
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <label style="font-size:12px;color:var(--muted)">${t('dy.jump')}</label>
-        <input type="date" class="inp-sm" value="${selDate}" min="2026-01-03" max="2026-03-23"
+        <input type="date" class="inp-sm" value="${selDate}" min="2025-11-13" max="2026-07-26"
           onchange="selDate=this.value;rDy()" style="width:150px">
       </div>
     </div>
@@ -901,7 +937,7 @@ function rDy(){
             ${(()=>{let c=0;return DAILY.map((f,i)=>{
               c+=f; const dt=d2s(i), dw=DOW[new Date(dt+'T00:00:00Z').getUTCDay()];
               const hi=dt===selDate, mo=dt.slice(5,7);
-              const period=mo==='01'?MO[0]:mo==='02'?MO[1]:MO[2];
+              const period=mo==='11'?MO[0]:mo==='12'?MO[1]:mo==='01'?MO[2]:mo==='02'?MO[3]:mo==='03'?MO[4]:mo==='04'?MO[5]:mo==='05'?MO[6]:mo==='06'?MO[7]:MO[8];
               return `<tr style="${hi?'background:rgba(168,85,247,.1);':''}" onclick="selDate='${dt}';rDy()">
                 <td style="color:var(--muted)">${i+1}</td>
                 <td style="font-weight:${hi?700:400};cursor:pointer">${dt}</td>
@@ -929,7 +965,8 @@ function rDy(){
 let waFilter='all';
 function rWa(){
   const el=document.getElementById('v-wa');
-  const numList = currentNumType()==='us' ? allNumsUS : allNums;
+  const nt=currentNumType();
+  const numList = nt==='us' ? allNumsUS : nt==='de' ? allNumsDE : allNums;
   const show=waFilter==='stable'?numList.filter(n=>n.stable)
             :waFilter==='banned'?numList.filter(n=>n.banDate)
             :waFilter==='current'?numList.filter(n=>n.isCurrent)
