@@ -656,7 +656,9 @@ function mkPhoneDE(seed){
   const len=srng(seed*31+19)>0.5?7:8;
   let tail='';
   for(let k=0;k<len;k++) tail+=String(Math.floor(srng(seed*37+k*7+11)*10));
-  return `+49 ${pre} ${tail}`;
+  // 脱敏：只显示后4位，中间用 * 代替
+  const mask='*'.repeat(len-4), last4=tail.slice(-4);
+  return `+49 ${pre} ${mask}${last4}`;
 }
 
 const EMP_BANS=[
